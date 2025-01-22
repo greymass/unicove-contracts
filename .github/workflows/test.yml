@@ -38,7 +38,7 @@ jobs:
                   sudo apt-get update
                   sudo apt install unzip
                   unzip cdt.zip
-                  sudo dpkg -i ./cdt_4.1.1-1_amd64.deb
+                  sudo dpkg -i ./cdt_4.2.0-dev_amd64.deb
             - name: Run checks
               run: make jscheck
             - name: Run tests
