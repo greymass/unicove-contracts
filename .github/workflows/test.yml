@@ -36,7 +36,7 @@ jobs:
               run: make node_modules
             - name: Install CDT
               run: |
-                  curl -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" -L -o cdt.zip https://api.github.com/repos/AntelopeIO/cdt/actions/artifacts/1477929285/zip
+                  curl -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" -L -o cdt.zip https://api.github.com/repos/AntelopeIO/cdt/actions/artifacts/2440855012/zip
                   sudo apt-get update
                   sudo apt install unzip
                   unzip cdt.zip
