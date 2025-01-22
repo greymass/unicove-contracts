@@ -18,6 +18,11 @@ build/api/debug:
 build/api/production:
 	make -C contracts/api build/production
 
+# TESTNET
+
+testnet:
+	make -C contracts/api testnet
+
 # UNIT TESTS
 
 test/api: build/api/debug node_modules codegen

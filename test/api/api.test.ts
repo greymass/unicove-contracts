@@ -1,6 +1,7 @@
 import {beforeEach, describe, test} from 'bun:test'
 
-import {apiContract, contracts, resetContracts} from '../helpers'
+import {api, apiContract, contracts, resetContracts} from '../helpers'
+import {APIClient, Serializer} from '@wharfkit/antelope'
 
 describe(apiContract, () => {
     beforeEach(async () => {
@@ -9,7 +10,12 @@ describe(apiContract, () => {
 
     describe('action::getaccount', () => {
         test('success', async () => {
-            await contracts.api.actions.getaccount(['bar']).send()
+            const contract = new api.Contract({
+                account: 'api.gm',
+                client: new APIClient({url: 'https://jungle4.greymass.com '}),
+            })
+            const result = await contract.readonly('getaccount', {account: 'babyproofing'})
+            console.log(Serializer.objectify(result))
         })
     })
 })
