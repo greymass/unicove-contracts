@@ -25,13 +25,13 @@ clean:
 	rm -rf build
 
 testnet: build/debug
-	cleos -u $(TESTNET_NODE_URL) set contract $(TESTNET_PLATFORM_ACCOUNT) \
+	cleos -u $(TESTNET_NODE_URL) set contract $(TESTNET_CONTRACT_ACCOUNT) \
 		build/ ${SRC_CONTRACT_NAME}.wasm ${SRC_CONTRACT_NAME}.abi
 
 mainnet: build/production
 	cleos -u $(MAINNET_NODE_URL) set contract \
 		--dont-broadcast --skip-sign --expiration 259200 --json-file msig.json \
-		${MAINNET_PLATFORM_ACCOUNT} build/ ${SRC_CONTRACT_NAME}.wasm ${SRC_CONTRACT_NAME}.abi
+		${MAINNET_CONTRACT_ACCOUNT} build/ ${SRC_CONTRACT_NAME}.wasm ${SRC_CONTRACT_NAME}.abi
 	cleos -u $(MAINNET_NODE_URL) multisig propose_trx ${MAINNET_MSIG_PROPOSAL} ${MAINNET_MSIG_SIGNERS} \
 		msig.json ${MAINNET_MSIG_PROPOSER} -p ${MAINNET_MSIG_PERMISSION}
 
