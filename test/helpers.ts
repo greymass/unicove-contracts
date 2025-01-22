@@ -1,27 +1,23 @@
 import {Blockchain} from '@proton/vert'
 import {TimePointSec} from '@greymass/eosio'
 
-import * as ContractNameContract from '../codegen/contractname.ts'
+import * as ApiContract from '../codegen/api.ts'
 
-export const ContractName = ContractNameContract
+export const api = ApiContract
 
 export const blockchain = new Blockchain()
 export const alice = 'alice'
 export const bob = 'bob'
 blockchain.createAccounts(bob, alice)
 
-export const contractnameContract = 'contractname'
+export const apiContract = 'api'
 
 export const contracts = {
-    contractname: blockchain.createContract(
-        contractnameContract,
-        `./contracts/contractname/build/contractname`,
-        true
-    ),
+    api: blockchain.createContract(apiContract, `./contracts/api/build/api`, true),
 }
 
 export async function resetContracts() {
-    await contracts.contractname.actions.wipe().send()
+    await contracts.api.actions.wipe().send()
 }
 
 export function advanceTime(seconds: number) {

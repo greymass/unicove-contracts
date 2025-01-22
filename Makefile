@@ -3,28 +3,28 @@ SHELL := /bin/bash
 
 # CONTRACT BUILD
 
-build: build/contractname/production
+build: build/api/production
 
-build/debug: build/contractname/debug
+build/debug: build/api/debug
 
-build/production: build/contractname/production
+build/production: build/api/production
 
-build/contractname:
-	make -C contracts/contractname build
+build/api:
+	make -C contracts/api build
 
-build/contractname/debug:
-	make -C contracts/contractname build/debug
+build/api/debug:
+	make -C contracts/api build/debug
 
-build/contractname/production:
-	make -C contracts/contractname build/production
+build/api/production:
+	make -C contracts/api build/production
 
 # UNIT TESTS
 
-test/contractname: build/contractname/debug node_modules codegen
+test/api: build/api/debug node_modules codegen
 	bun test
 
 node_modules:
-	make -C contracts/contractname node_modules
+	make -C contracts/api node_modules
 
 .PHONY: jscheck
 jscheck: node_modules
@@ -36,7 +36,7 @@ test: build/debug codegen node_modules
 # CODEGEN
 
 .PHONY: codegen
-codegen: codegen/contractname
+codegen: codegen/api
 
-codegen/contractname:
-	npx @wharfkit/cli generate --json ./contracts/contractname/build/contractname.abi --file ./codegen/contractname.ts contractname
+codegen/api:
+	npx @wharfkit/cli generate --json ./contracts/api/build/api.abi --file ./codegen/api.ts api

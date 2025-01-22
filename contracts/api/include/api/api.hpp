@@ -6,18 +6,23 @@
 using namespace eosio;
 using namespace std;
 
-namespace contractname {
+namespace api {
 
-class [[eosio::contract("contractname")]] contractname : public contract
+struct get_account_response
+{
+   name account;
+};
+
+class [[eosio::contract("api")]] api : public contract
 {
 public:
    using contract::contract;
 
    /**
-    * Example Action
+    * getaccount readonly action
     */
-   [[eosio::action]] void foo(const string bar);
-   using foo_action = action_wrapper<"foo"_n, &contractname::foo>;
+   [[eosio::action]] get_account_response getaccount(const name account);
+   using getaccount_action = action_wrapper<"getaccount"_n, &api::getaccount>;
 
 // DEBUG (used to help testing)
 #ifdef DEBUG
@@ -35,4 +40,4 @@ private:
 #endif
 };
 
-} // namespace contractname
+} // namespace api

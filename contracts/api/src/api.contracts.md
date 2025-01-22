@@ -9,13 +9,13 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 
 ---
 
-<h1 class="contract">foo</h1>
+<h1 class="contract">getaccount</h1>
 
 ---
 
 spec_version: "0.2.0"
-title: foo
-summary: 'DEBUG: foo action'
+title: getaccount
+summary: 'Read-only API to get account data'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
