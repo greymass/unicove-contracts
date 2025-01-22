@@ -36,7 +36,7 @@ jobs:
               run: |
                   curl -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" -L -o cdt.zip https://api.github.com/repos/AntelopeIO/cdt/actions/artifacts/2440855012/zip
                   sudo apt-get update
-                  sudo apt install unzip
+                  sudo apt install unzip libcurl4-gnutls-dev
                   unzip cdt.zip
                   sudo dpkg -i ./cdt_4.2.0-dev_amd64.deb
             - name: Run checks
