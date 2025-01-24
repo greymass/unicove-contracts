@@ -2,6 +2,7 @@
 
 #include <eosio.msig/eosio.msig.hpp>
 #include <eosio.system/eosio.system.hpp>
+#include <eosio.token/eosio.token.hpp>
 #include <eosio/contract.hpp>
 #include <eosio/singleton.hpp>
 
@@ -13,10 +14,12 @@ namespace api {
 struct get_account_response
 {
    name                                          account;
+   asset                                         balance;
    std::vector<eosiosystem::delegated_bandwidth> delegations;
    std::vector<eosio::multisig::proposal>        proposals;
-   std::optional<eosiosystem::rex_balance>       rexbal;
-   std::optional<eosiosystem::rex_fund>          rexfund;
+   eosiosystem::refund_request                   refund;
+   eosiosystem::rex_balance                      rexbal;
+   eosiosystem::rex_fund                         rexfund;
 };
 
 class [[eosio::contract("api")]] api : public contract
