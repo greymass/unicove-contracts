@@ -60,19 +60,18 @@ public:
    [[eosio::action, eosio::read_only]] std::vector<asset> getbalances(const name account);
    using getbalances_action = action_wrapper<"getbalances"_n, &api::getbalances>;
 
-// DEBUG (used to help testing)
 #ifdef DEBUG
-   [[eosio::action]] void
-   cleartable(const name table_name, const optional<name> scope, const optional<uint64_t> max_rows);
    [[eosio::action]] void wipe();
+   [[eosio::action]] void reset();
 #endif
 
 private:
-// DEBUG (used to help testing)
 #ifdef DEBUG
-   // @debug
    template <typename T>
    void clear_table(T& table, uint64_t rows_to_clear);
+   void reset_singletons();
+   void wipe_singletons();
+   void wipe_tables();
 #endif
 };
 
