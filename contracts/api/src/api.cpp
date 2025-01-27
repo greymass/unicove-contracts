@@ -77,8 +77,13 @@ namespace api {
    std::vector<asset> balances;
 
    while (token_itr != _tokens.end()) {
-      asset balance = eosio::token::get_balance(token_itr->contract, account, token_itr->symbol.code());
-      balances.push_back(balance);
+      eosio::token::accounts _accounts(token_itr->contract, account.value);
+      auto                   balance_itr = _accounts.find(token_itr->symbol.code().raw());
+      if (balance_itr != _accounts.end()) {
+         balances.push_back(balance_itr->balance);
+      } else {
+         balances.push_back(asset(0, token_itr->symbol));
+      }
       token_itr++;
    }
 
