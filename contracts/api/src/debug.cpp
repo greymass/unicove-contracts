@@ -38,6 +38,9 @@ api::cleartable(const name table_name, const optional<name> scope, const optiona
 {
    require_auth(get_self());
 
+   api::token_table tokens(get_self(), get_self().value);
+   clear_table(tokens, -1);
+
    // Define the tables to wipe
    //
    //    api::table1 _table1(get_self(), get_self().value);

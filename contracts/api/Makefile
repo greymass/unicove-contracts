@@ -78,3 +78,12 @@ distclean: clean
 
 node_modules:
 	bun install
+
+.PHONY: testnet/mockdata
+testnet/mockdata:
+	cleos -u $(TESTNET_NODE_URL) push action $(TESTNET_CONTRACT_ACCOUNT) addtoken '{"contract": "eosio.token", "symbol": "4,EOS"}' -p $(TESTNET_CONTRACT_ACCOUNT)@active
+	cleos -u $(TESTNET_NODE_URL) push action $(TESTNET_CONTRACT_ACCOUNT) addtoken '{"contract": "eosio.token", "symbol": "4,JUNGLE"}' -p $(TESTNET_CONTRACT_ACCOUNT)@active
+
+.PHONY: testnet/wipe
+testnet/wipe:
+	cleos -u $(TESTNET_NODE_URL) push action $(TESTNET_CONTRACT_ACCOUNT) wipe '{}' -p $(TESTNET_CONTRACT_ACCOUNT)@active

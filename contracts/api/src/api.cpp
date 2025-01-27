@@ -3,7 +3,7 @@
 const name   SYSTEM_CONTRACT_ACCOUNT = name("eosio");
 const name   MSIG_CONTRACT_ACCOUNT   = name("eosio.msig");
 const name   SYSTEM_TOKEN_ACCOUNT    = name("eosio.token");
-const symbol SYSTEM_TOKEN_SYMBOL     = eosiosystem::system_contract::get_core_symbol();
+const symbol SYSTEM_TOKEN_SYMBOL     = symbol("EOS", 4);
 
 namespace api {
 
@@ -68,6 +68,40 @@ namespace api {
                                .refund      = refund,
                                .rexbal      = rexbal,
                                .rexfund     = rexfund};
+}
+
+[[eosio::action, eosio::read_only]] std::vector<asset> api::getbalances(const name account)
+{
+   token_table        _tokens(get_self(), get_self().value);
+   auto               token_itr = _tokens.begin();
+   std::vector<asset> balances;
+
+   while (token_itr != _tokens.end()) {
+      asset balance = eosio::token::get_balance(token_itr->contract, account, token_itr->symbol.code());
+      balances.push_back(balance);
+      token_itr++;
+   }
+
+   return balances;
+}
+
+[[eosio::action]] void api::addtoken(const name contract, const symbol symbol)
+{
+   require_auth(get_self());
+   token_table tokens(get_self(), get_self().value);
+   tokens.emplace(get_self(), [&](auto& row) {
+      row.id       = tokens.available_primary_key();
+      row.contract = contract;
+      row.symbol   = symbol;
+   });
+}
+[[eosio::action]] void api::removetoken(const uint64_t id)
+{
+   require_auth(get_self());
+   token_table tokens(get_self(), get_self().value);
+   auto        token_itr = tokens.find(id);
+   check(token_itr != tokens.end(), "token not found");
+   tokens.erase(token_itr);
 }
 
 } // namespace api

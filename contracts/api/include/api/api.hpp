@@ -27,11 +27,26 @@ class [[eosio::contract("api")]] api : public contract
 public:
    using contract::contract;
 
+   struct [[eosio::table("tokens")]] token_row
+   {
+      uint64_t id;
+      name     contract;
+      symbol   symbol;
+      uint64_t primary_key() const { return id; }
+   };
+   typedef eosio::multi_index<"tokens"_n, token_row> token_table;
+
+   [[eosio::action]] void addtoken(const name contract, const symbol symbol);
+   [[eosio::action]] void removetoken(const uint64_t id);
+
    /**
     * getaccount readonly action
     */
-   [[eosio::action]] get_account_response getaccount(const name account);
+   [[eosio::action, eosio::read_only]] get_account_response getaccount(const name account);
    using getaccount_action = action_wrapper<"getaccount"_n, &api::getaccount>;
+
+   [[eosio::action, eosio::read_only]] std::vector<asset> getbalances(const name account);
+   using getbalances_action = action_wrapper<"getbalances"_n, &api::getbalances>;
 
 // DEBUG (used to help testing)
 #ifdef DEBUG
