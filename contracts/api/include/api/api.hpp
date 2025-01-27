@@ -27,6 +27,15 @@ class [[eosio::contract("api")]] api : public contract
 public:
    using contract::contract;
 
+   struct [[eosio::table("config")]] config_row
+   {
+      name   system_contract       = name("eosio");
+      name   system_contract_msig  = name("eosio.msig");
+      name   system_token_contract = name("eosio.token");
+      symbol system_token_symbol   = symbol("EOS", 4);
+   };
+   typedef eosio::singleton<"config"_n, config_row> config_table;
+
    struct [[eosio::table("tokens")]] token_row
    {
       uint64_t id;

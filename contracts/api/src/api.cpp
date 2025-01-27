@@ -1,24 +1,22 @@
 #include "api/api.hpp"
 
-const name   SYSTEM_CONTRACT_ACCOUNT = name("eosio");
-const name   MSIG_CONTRACT_ACCOUNT   = name("eosio.msig");
-const name   SYSTEM_TOKEN_ACCOUNT    = name("eosio.token");
-const symbol SYSTEM_TOKEN_SYMBOL     = symbol("EOS", 4);
-
 namespace api {
 
 [[eosio::action, eosio::read_only]] get_account_response api::getaccount(const name account)
 {
+   config_table _config(get_self(), get_self().value);
+   auto         config = _config.get_or_default();
+
    // get core token balance for the account
    asset                  balance;
-   eosio::token::accounts balance_table(SYSTEM_TOKEN_ACCOUNT, account.value);
-   auto                   balance_itr = balance_table.get(SYSTEM_TOKEN_SYMBOL.code().raw(), "no balance object found");
-   balance                            = balance_itr.balance;
+   eosio::token::accounts balance_table(config.system_token_contract, account.value);
+   auto balance_itr = balance_table.get(config.system_token_symbol.code().raw(), "no balance object found");
+   balance          = balance_itr.balance;
 
    // get pending refund for the account
    eosiosystem::refund_request refund;
 
-   eosiosystem::refunds_table refunds_table(SYSTEM_CONTRACT_ACCOUNT, account.value);
+   eosiosystem::refunds_table refunds_table(config.system_contract, account.value);
    auto                       refund_itr = refunds_table.find(account.value);
    if (refund_itr != refunds_table.end()) {
       refund = *refund_itr;
@@ -26,7 +24,7 @@ namespace api {
 
    // get all delegated balances for the account
    std::vector<eosiosystem::delegated_bandwidth> dbw_rows;
-   eosiosystem::del_bandwidth_table              dbw_table(SYSTEM_CONTRACT_ACCOUNT, account.value);
+   eosiosystem::del_bandwidth_table              dbw_table(config.system_contract, account.value);
    auto                                          dbw_itr = dbw_table.begin();
    while (dbw_itr != dbw_table.end()) {
       dbw_rows.push_back(*dbw_itr);
@@ -35,7 +33,7 @@ namespace api {
 
    // get all msig proposals from the account
    std::vector<eosio::multisig::proposal> msig_rows;
-   eosio::multisig::proposals             msig_table(MSIG_CONTRACT_ACCOUNT, account.value);
+   eosio::multisig::proposals             msig_table(config.system_contract_msig, account.value);
    auto                                   msig_itr = msig_table.begin();
    while (msig_itr != msig_table.end()) {
       msig_rows.push_back(*msig_itr);
@@ -47,14 +45,14 @@ namespace api {
 
    if (eosiosystem::system_contract::rex_system_initialized()) {
       // get rexbal entry for the account
-      eosiosystem::rex_balance_table rexbal_table(SYSTEM_CONTRACT_ACCOUNT, SYSTEM_CONTRACT_ACCOUNT.value);
+      eosiosystem::rex_balance_table rexbal_table(config.system_contract, config.system_contract.value);
       auto                           rex_itr = rexbal_table.find(account.value);
       if (rex_itr != rexbal_table.end()) {
          rexbal = *rex_itr;
       }
 
       // get rexfund entry for the account
-      eosiosystem::rex_fund_table rexfund_table(SYSTEM_CONTRACT_ACCOUNT, SYSTEM_CONTRACT_ACCOUNT.value);
+      eosiosystem::rex_fund_table rexfund_table(config.system_contract, config.system_contract.value);
       auto                        rexfund_itr = rexfund_table.find(account.value);
       if (rexfund_itr != rexfund_table.end()) {
          rexfund = *rexfund_itr;
