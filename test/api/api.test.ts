@@ -1,7 +1,7 @@
 import {beforeEach, describe, expect, test} from 'bun:test'
 
-import {api, apiContract, contracts, resetContracts} from '../helpers'
-import {APIClient, Serializer} from '@wharfkit/antelope'
+import {apiContract, contracts, resetContracts} from '../helpers'
+import {Serializer} from '@wharfkit/antelope'
 
 describe(apiContract, () => {
     beforeEach(async () => {
