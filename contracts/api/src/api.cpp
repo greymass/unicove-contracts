@@ -107,6 +107,21 @@ namespace api {
    tokens.erase(token_itr);
 }
 
+[[eosio::action]] void api::setconfig(const name   system_contract,
+                                      const name   system_contract_msig,
+                                      const name   system_token_contract,
+                                      const symbol system_token_symbol)
+{
+   require_auth(get_self());
+   config_table _config(get_self(), get_self().value);
+   auto         config          = _config.get_or_default();
+   config.system_contract       = system_contract;
+   config.system_contract_msig  = system_contract_msig;
+   config.system_token_contract = system_token_contract;
+   config.system_token_symbol   = system_token_symbol;
+   _config.set(config, get_self());
+}
+
 } // namespace api
 
 // DEBUG (used on testnet)

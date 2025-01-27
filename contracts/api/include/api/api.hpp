@@ -47,7 +47,10 @@ public:
 
    [[eosio::action]] void addtoken(const name contract, const symbol symbol);
    [[eosio::action]] void removetoken(const uint64_t id);
-
+   [[eosio::action]] void setconfig(const name   system_contract,
+                                    const name   system_contract_msig,
+                                    const name   system_token_contract,
+                                    const symbol system_token_symbol);
    /**
     * getaccount readonly action
     */
