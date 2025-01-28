@@ -23,6 +23,11 @@ build/api/production:
 testnet:
 	make -C contracts/api testnet
 
+# MAINNET
+
+mainnet:
+	make -C contracts/api mainnet
+
 # UNIT TESTS
 
 test/api: build/api/debug node_modules codegen
