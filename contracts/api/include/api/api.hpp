@@ -22,6 +22,12 @@ struct get_account_response
    eosiosystem::rex_fund                         rexfund;
 };
 
+struct token_definition
+{
+   name   contract;
+   symbol symbol;
+};
+
 class [[eosio::contract("api")]] api : public contract
 {
 public:
@@ -45,7 +51,8 @@ public:
    };
    typedef eosio::multi_index<"tokens"_n, token_row> token_table;
 
-   [[eosio::action]] void addtoken(const name contract, const symbol symbol);
+   [[eosio::action]] void addtoken(const token_definition token);
+   [[eosio::action]] void addtokens(const std::vector<token_definition> tokens);
    [[eosio::action]] void removetoken(const uint64_t id);
    [[eosio::action]] void setconfig(const name   system_contract,
                                     const name   system_contract_msig,
@@ -66,6 +73,8 @@ public:
 #endif
 
 private:
+   void add_token(const token_definition token);
+
 #ifdef DEBUG
    template <typename T>
    void clear_table(T& table, uint64_t rows_to_clear);

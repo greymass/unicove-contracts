@@ -49,4 +49,4 @@ test: build/debug codegen node_modules
 codegen: codegen/api
 
 codegen/api:
-	npx @wharfkit/cli generate --json ./contracts/api/build/api.abi --file ./codegen/api.ts api
+	npx @wharfkit/cli generate --json ./contracts/api/build/api.abi --file ./codegen/api.ts unicove.gm

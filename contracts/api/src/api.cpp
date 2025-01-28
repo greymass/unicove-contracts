@@ -88,16 +88,26 @@ namespace api {
    return balances;
 }
 
-[[eosio::action]] void api::addtoken(const name contract, const symbol symbol)
+void api::add_token(const token_definition token)
 {
    require_auth(get_self());
    token_table tokens(get_self(), get_self().value);
    tokens.emplace(get_self(), [&](auto& row) {
       row.id       = tokens.available_primary_key();
-      row.contract = contract;
-      row.symbol   = symbol;
+      row.contract = token.contract;
+      row.symbol   = token.symbol;
    });
 }
+
+[[eosio::action]] void api::addtoken(const token_definition token) { add_token(token); }
+
+[[eosio::action]] void api::addtokens(const std::vector<token_definition> tokens)
+{
+   for (const auto& token : tokens) {
+      add_token(token);
+   }
+}
+
 [[eosio::action]] void api::removetoken(const uint64_t id)
 {
    require_auth(get_self());
