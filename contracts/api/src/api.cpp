@@ -68,21 +68,38 @@ namespace api {
                                .rexfund     = rexfund};
 }
 
-[[eosio::action, eosio::read_only]] std::vector<asset> api::getbalances(const name account)
+std::vector<token_definition> api::get_token_definitions()
 {
-   token_table        _tokens(get_self(), get_self().value);
-   auto               token_itr = _tokens.begin();
+   std::vector<token_definition> result;
+   token_table                   _tokens(get_self(), get_self().value);
+   auto                          token_itr = _tokens.begin();
+   while (token_itr != _tokens.end()) {
+      result.push_back({.contract = token_itr->contract, .symbol = token_itr->symbol});
+      token_itr++;
+   }
+   return result;
+}
+
+[[eosio::action, eosio::read_only]] std::vector<token_definition> api::gettokens() { return get_token_definitions(); }
+
+[[eosio::action, eosio::read_only]] std::vector<asset> api::getbalances(const name                          account,
+                                                                        const std::vector<token_definition> tokens)
+{
    std::vector<asset> balances;
 
-   while (token_itr != _tokens.end()) {
-      eosio::token::accounts _accounts(token_itr->contract, account.value);
-      auto                   balance_itr = _accounts.find(token_itr->symbol.code().raw());
+   std::vector<token_definition> token_definitions = tokens;
+   if (token_definitions.size() == 0) {
+      token_definitions = get_token_definitions();
+   }
+
+   for (const auto& token : token_definitions) {
+      eosio::token::accounts _accounts(token.contract, account.value);
+      auto                   balance_itr = _accounts.find(token.symbol.code().raw());
       if (balance_itr != _accounts.end()) {
          balances.push_back(balance_itr->balance);
       } else {
-         balances.push_back(asset(0, token_itr->symbol));
+         balances.push_back(asset(0, token.symbol));
       }
-      token_itr++;
    }
 
    return balances;

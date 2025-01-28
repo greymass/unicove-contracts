@@ -64,8 +64,12 @@ public:
    [[eosio::action, eosio::read_only]] get_account_response getaccount(const name account);
    using getaccount_action = action_wrapper<"getaccount"_n, &api::getaccount>;
 
-   [[eosio::action, eosio::read_only]] std::vector<asset> getbalances(const name account);
+   [[eosio::action, eosio::read_only]] std::vector<asset> getbalances(const name                          account,
+                                                                      const std::vector<token_definition> tokens);
    using getbalances_action = action_wrapper<"getbalances"_n, &api::getbalances>;
+
+   [[eosio::action, eosio::read_only]] std::vector<token_definition> gettokens();
+   using gettokens_action = action_wrapper<"gettokens"_n, &api::gettokens>;
 
 #ifdef DEBUG
    [[eosio::action]] void wipe();
@@ -73,7 +77,8 @@ public:
 #endif
 
 private:
-   void add_token(const token_definition token);
+   void                          add_token(const token_definition token);
+   std::vector<token_definition> get_token_definitions();
 
 #ifdef DEBUG
    template <typename T>

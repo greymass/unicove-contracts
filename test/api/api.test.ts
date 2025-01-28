@@ -11,8 +11,12 @@ describe(apiContract, () => {
     describe('action::addtoken', () => {
         describe('success', () => {
             test('add tokens', async () => {
-                await contracts.api.actions.addtoken(['eosio.token', '4,EOS']).send()
-                await contracts.api.actions.addtoken(['scrap', '0,SCRAP']).send()
+                await contracts.api.actions
+                    .addtoken([{contract: 'eosio.token', symbol: '4,EOS'}])
+                    .send()
+                await contracts.api.actions
+                    .addtoken([{contract: 'scrap', symbol: '0,SCRAP'}])
+                    .send()
 
                 const rows = await contracts.api.tables.tokens().getTableRows()
                 expect(rows).toHaveLength(2)
@@ -23,7 +27,7 @@ describe(apiContract, () => {
         describe('error', () => {
             test('require contract auth', async () => {
                 const action = contracts.api.actions
-                    .addtoken(['eosio.token', '4,EOS'])
+                    .addtoken([{contract: 'eosio.token', symbol: '4,EOS'}])
                     .send('alice')
                 expect(action).rejects.toThrow('missing required authority api')
             })
@@ -33,8 +37,12 @@ describe(apiContract, () => {
     describe('action::removetoken', () => {
         describe('success', () => {
             test('remove tokens', async () => {
-                await contracts.api.actions.addtoken(['eosio.token', '4,EOS']).send()
-                await contracts.api.actions.addtoken(['scrap', '0,SCRAP']).send()
+                await contracts.api.actions
+                    .addtoken([{contract: 'eosio.token', symbol: '4,EOS'}])
+                    .send()
+                await contracts.api.actions
+                    .addtoken([{contract: 'scrap', symbol: '0,SCRAP'}])
+                    .send()
 
                 const rows = await contracts.api.tables.tokens().getTableRows()
                 expect(rows).toHaveLength(2)
@@ -55,7 +63,9 @@ describe(apiContract, () => {
         })
         describe('error', () => {
             test('require contract auth', async () => {
-                await contracts.api.actions.addtoken(['eosio.token', '4,EOS']).send()
+                await contracts.api.actions
+                    .addtoken([{contract: 'eosio.token', symbol: '4,EOS'}])
+                    .send()
                 const action = contracts.api.actions.removetoken([0]).send('alice')
                 expect(action).rejects.toThrow('missing required authority api')
             })
