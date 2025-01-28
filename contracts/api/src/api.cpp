@@ -1,32 +1,31 @@
 #include "api/api.hpp"
 
-const name   SYSTEM_CONTRACT_ACCOUNT = name("eosio");
-const name   MSIG_CONTRACT_ACCOUNT   = name("eosio.msig");
-const name   SYSTEM_TOKEN_ACCOUNT    = name("eosio.token");
-const symbol SYSTEM_TOKEN_SYMBOL     = eosiosystem::system_contract::get_core_symbol();
-
 namespace api {
 
 [[eosio::action, eosio::read_only]] get_account_response api::getaccount(const name account)
 {
+   config_table _config(get_self(), get_self().value);
+   auto         config = _config.get_or_default();
+
    // get core token balance for the account
-   asset                  balance;
-   eosio::token::accounts balance_table(SYSTEM_TOKEN_ACCOUNT, account.value);
-   auto                   balance_itr = balance_table.get(SYSTEM_TOKEN_SYMBOL.code().raw(), "no balance object found");
-   balance                            = balance_itr.balance;
+   asset                  balance = asset(0, config.system_token_symbol);
+   eosio::token::accounts balance_table(config.system_token_contract, account.value);
+   auto                   balance_itr = balance_table.find(config.system_token_symbol.code().raw());
+   if (balance_itr != balance_table.end()) {
+      balance = balance_itr->balance;
+   }
 
    // get pending refund for the account
    eosiosystem::refund_request refund;
-
-   eosiosystem::refunds_table refunds_table(SYSTEM_CONTRACT_ACCOUNT, account.value);
-   auto                       refund_itr = refunds_table.find(account.value);
+   eosiosystem::refunds_table  refunds_table(config.system_contract, account.value);
+   auto                        refund_itr = refunds_table.find(account.value);
    if (refund_itr != refunds_table.end()) {
       refund = *refund_itr;
    }
 
    // get all delegated balances for the account
    std::vector<eosiosystem::delegated_bandwidth> dbw_rows;
-   eosiosystem::del_bandwidth_table              dbw_table(SYSTEM_CONTRACT_ACCOUNT, account.value);
+   eosiosystem::del_bandwidth_table              dbw_table(config.system_contract, account.value);
    auto                                          dbw_itr = dbw_table.begin();
    while (dbw_itr != dbw_table.end()) {
       dbw_rows.push_back(*dbw_itr);
@@ -35,7 +34,7 @@ namespace api {
 
    // get all msig proposals from the account
    std::vector<eosio::multisig::proposal> msig_rows;
-   eosio::multisig::proposals             msig_table(MSIG_CONTRACT_ACCOUNT, account.value);
+   eosio::multisig::proposals             msig_table(config.system_contract_msig, account.value);
    auto                                   msig_itr = msig_table.begin();
    while (msig_itr != msig_table.end()) {
       msig_rows.push_back(*msig_itr);
@@ -44,17 +43,16 @@ namespace api {
 
    eosiosystem::rex_balance rexbal;
    eosiosystem::rex_fund    rexfund;
-
    if (eosiosystem::system_contract::rex_system_initialized()) {
       // get rexbal entry for the account
-      eosiosystem::rex_balance_table rexbal_table(SYSTEM_CONTRACT_ACCOUNT, SYSTEM_CONTRACT_ACCOUNT.value);
+      eosiosystem::rex_balance_table rexbal_table(config.system_contract, config.system_contract.value);
       auto                           rex_itr = rexbal_table.find(account.value);
       if (rex_itr != rexbal_table.end()) {
          rexbal = *rex_itr;
       }
 
       // get rexfund entry for the account
-      eosiosystem::rex_fund_table rexfund_table(SYSTEM_CONTRACT_ACCOUNT, SYSTEM_CONTRACT_ACCOUNT.value);
+      eosiosystem::rex_fund_table rexfund_table(config.system_contract, config.system_contract.value);
       auto                        rexfund_itr = rexfund_table.find(account.value);
       if (rexfund_itr != rexfund_table.end()) {
          rexfund = *rexfund_itr;
@@ -68,6 +66,87 @@ namespace api {
                                .refund      = refund,
                                .rexbal      = rexbal,
                                .rexfund     = rexfund};
+}
+
+std::vector<token_definition> api::get_token_definitions()
+{
+   std::vector<token_definition> result;
+   token_table                   _tokens(get_self(), get_self().value);
+   auto                          token_itr = _tokens.begin();
+   while (token_itr != _tokens.end()) {
+      result.push_back({.contract = token_itr->contract, .symbol = token_itr->symbol});
+      token_itr++;
+   }
+   return result;
+}
+
+[[eosio::action, eosio::read_only]] std::vector<token_definition> api::gettokens() { return get_token_definitions(); }
+
+[[eosio::action, eosio::read_only]] std::vector<asset> api::getbalances(const name                          account,
+                                                                        const std::vector<token_definition> tokens)
+{
+   std::vector<asset> balances;
+
+   std::vector<token_definition> token_definitions = tokens;
+   if (token_definitions.size() == 0) {
+      token_definitions = get_token_definitions();
+   }
+
+   for (const auto& token : token_definitions) {
+      eosio::token::accounts _accounts(token.contract, account.value);
+      auto                   balance_itr = _accounts.find(token.symbol.code().raw());
+      if (balance_itr != _accounts.end()) {
+         balances.push_back(balance_itr->balance);
+      } else {
+         balances.push_back(asset(0, token.symbol));
+      }
+   }
+
+   return balances;
+}
+
+void api::add_token(const token_definition token)
+{
+   require_auth(get_self());
+   token_table tokens(get_self(), get_self().value);
+   tokens.emplace(get_self(), [&](auto& row) {
+      row.id       = tokens.available_primary_key();
+      row.contract = token.contract;
+      row.symbol   = token.symbol;
+   });
+}
+
+[[eosio::action]] void api::addtoken(const token_definition token) { add_token(token); }
+
+[[eosio::action]] void api::addtokens(const std::vector<token_definition> tokens)
+{
+   for (const auto& token : tokens) {
+      add_token(token);
+   }
+}
+
+[[eosio::action]] void api::removetoken(const uint64_t id)
+{
+   require_auth(get_self());
+   token_table tokens(get_self(), get_self().value);
+   auto        token_itr = tokens.find(id);
+   check(token_itr != tokens.end(), "token not found");
+   tokens.erase(token_itr);
+}
+
+[[eosio::action]] void api::setconfig(const name   system_contract,
+                                      const name   system_contract_msig,
+                                      const name   system_token_contract,
+                                      const symbol system_token_symbol)
+{
+   require_auth(get_self());
+   config_table _config(get_self(), get_self().value);
+   auto         config          = _config.get_or_default();
+   config.system_contract       = system_contract;
+   config.system_contract_msig  = system_contract_msig;
+   config.system_token_contract = system_token_contract;
+   config.system_token_symbol   = system_token_symbol;
+   _config.set(config, get_self());
 }
 
 } // namespace api

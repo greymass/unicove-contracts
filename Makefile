@@ -23,6 +23,11 @@ build/api/production:
 testnet:
 	make -C contracts/api testnet
 
+# MAINNET
+
+mainnet:
+	make -C contracts/api mainnet
+
 # UNIT TESTS
 
 test/api: build/api/debug node_modules codegen
@@ -44,4 +49,4 @@ test: build/debug codegen node_modules
 codegen: codegen/api
 
 codegen/api:
-	npx @wharfkit/cli generate --json ./contracts/api/build/api.abi --file ./codegen/api.ts api
+	npx @wharfkit/cli generate --json ./contracts/api/build/api.abi --file ./codegen/api.ts unicove.gm

@@ -17,7 +17,7 @@ export const contracts = {
 }
 
 export async function resetContracts() {
-    await contracts.api.actions.wipe().send()
+    await contracts.api.actions.reset().send()
 }
 
 export function advanceTime(seconds: number) {

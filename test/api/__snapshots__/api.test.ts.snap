@@ -1,0 +1,81 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`api action::addtoken success 1`] = `
+{
+  "contract": "eosio.token",
+  "id": 0,
+  "symbol": "4,EOS",
+}
+`;
+
+exports[`api action::addtoken success 2`] = `
+{
+  "contract": "scrap",
+  "id": 1,
+  "symbol": "0,SCRAP",
+}
+`;
+
+exports[`api action::removetoken success 1`] = `
+{
+  "contract": "eosio.token",
+  "id": 0,
+  "symbol": "4,EOS",
+}
+`;
+
+exports[`api action::removetoken success 2`] = `
+{
+  "contract": "scrap",
+  "id": 1,
+  "symbol": "0,SCRAP",
+}
+`;
+
+exports[`api action::removetoken success 3`] = `
+{
+  "contract": "eosio.token",
+  "id": 0,
+  "symbol": "4,EOS",
+}
+`;
+
+exports[`api action::addtoken success add tokens 1`] = `
+{
+  "contract": "eosio.token",
+  "id": 0,
+  "symbol": "4,EOS",
+}
+`;
+
+exports[`api action::addtoken success add tokens 2`] = `
+{
+  "contract": "scrap",
+  "id": 1,
+  "symbol": "0,SCRAP",
+}
+`;
+
+exports[`api action::removetoken success remove tokens 1`] = `
+{
+  "contract": "eosio.token",
+  "id": 0,
+  "symbol": "4,EOS",
+}
+`;
+
+exports[`api action::removetoken success remove tokens 2`] = `
+{
+  "contract": "scrap",
+  "id": 1,
+  "symbol": "0,SCRAP",
+}
+`;
+
+exports[`api action::removetoken success remove tokens 3`] = `
+{
+  "contract": "eosio.token",
+  "id": 0,
+  "symbol": "4,EOS",
+}
+`;

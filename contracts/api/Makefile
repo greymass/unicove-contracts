@@ -5,9 +5,9 @@ BIN := ./node_modules/.bin
 
 SRC_CONTRACT_NAME = api
 MAINNET_NODE_URL = https://eos.greymass.com
-MAINNET_CONTRACT_ACCOUNT = api
+MAINNET_CONTRACT_ACCOUNT = unicove.gm
 TESTNET_NODE_URL = https://jungle4.greymass.com
-TESTNET_CONTRACT_ACCOUNT = api.gm
+TESTNET_CONTRACT_ACCOUNT = unicove.gm
 
 build: | build/dir
 	cdt-cpp -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -D DEBUG
@@ -29,11 +29,15 @@ testnet: build/debug
 		build/ ${SRC_CONTRACT_NAME}.wasm ${SRC_CONTRACT_NAME}.abi
 
 mainnet: build/production
-	cleos -u $(MAINNET_NODE_URL) set contract \
-		--dont-broadcast --skip-sign --expiration 259200 --json-file msig.json \
-		${MAINNET_CONTRACT_ACCOUNT} build/ ${SRC_CONTRACT_NAME}.wasm ${SRC_CONTRACT_NAME}.abi
-	cleos -u $(MAINNET_NODE_URL) multisig propose_trx ${MAINNET_MSIG_PROPOSAL} ${MAINNET_MSIG_SIGNERS} \
-		msig.json ${MAINNET_MSIG_PROPOSER} -p ${MAINNET_MSIG_PERMISSION}
+	cleos -u $(MAINNET_NODE_URL) set contract $(MAINNET_CONTRACT_ACCOUNT) \
+		build/ ${SRC_CONTRACT_NAME}.wasm ${SRC_CONTRACT_NAME}.abi
+
+# mainnet: build/production
+# 	cleos -u $(MAINNET_NODE_URL) set contract \
+# 		--dont-broadcast --skip-sign --expiration 259200 --json-file msig.json \
+# 		${MAINNET_CONTRACT_ACCOUNT} build/ ${SRC_CONTRACT_NAME}.wasm ${SRC_CONTRACT_NAME}.abi
+# 	cleos -u $(MAINNET_NODE_URL) multisig propose_trx ${MAINNET_MSIG_PROPOSAL} ${MAINNET_MSIG_SIGNERS} \
+# 		msig.json ${MAINNET_MSIG_PROPOSER} -p ${MAINNET_MSIG_PERMISSION}
 
 test: build/debug node_modules build/contract.ts
 	bun test
@@ -78,3 +82,13 @@ distclean: clean
 
 node_modules:
 	bun install
+
+.PHONY: testnet/mockdata
+testnet/mockdata:
+	cleos -u $(TESTNET_NODE_URL) push action $(TESTNET_CONTRACT_ACCOUNT) addtokens '{"tokens": [{"contract": "eosio.token", "symbol": "4,EOS"},{"contract": "eosio.token", "symbol": "4,EOS"}]}' -p $(TESTNET_CONTRACT_ACCOUNT)@active
+	# cleos -u $(TESTNET_NODE_URL) push action $(TESTNET_CONTRACT_ACCOUNT) addtoken '{"contract": "eosio.token", "symbol": "4,EOS"}' -p $(TESTNET_CONTRACT_ACCOUNT)@active
+	# cleos -u $(TESTNET_NODE_URL) push action $(TESTNET_CONTRACT_ACCOUNT) addtoken '{"contract": "eosio.token", "symbol": "4,JUNGLE"}' -p $(TESTNET_CONTRACT_ACCOUNT)@active
+
+.PHONY: testnet/wipe
+testnet/wipe:
+	cleos -u $(TESTNET_NODE_URL) push action $(TESTNET_CONTRACT_ACCOUNT) wipe '{}' -p $(TESTNET_CONTRACT_ACCOUNT)@active
