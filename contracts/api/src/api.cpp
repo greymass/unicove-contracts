@@ -8,10 +8,12 @@ namespace api {
    auto         config = _config.get_or_default();
 
    // get core token balance for the account
-   asset                  balance;
+   asset                  balance = asset(0, config.system_token_symbol);
    eosio::token::accounts balance_table(config.system_token_contract, account.value);
-   auto balance_itr = balance_table.get(config.system_token_symbol.code().raw(), "no balance object found");
-   balance          = balance_itr.balance;
+   auto                   balance_itr = balance_table.find(config.system_token_symbol.code().raw());
+   if (balance_itr != balance_table.end()) {
+      balance = balance_itr->balance;
+   }
 
    // get pending refund for the account
    eosiosystem::refund_request refund;
