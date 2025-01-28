@@ -17,9 +17,8 @@ namespace api {
 
    // get pending refund for the account
    eosiosystem::refund_request refund;
-
-   eosiosystem::refunds_table refunds_table(config.system_contract, account.value);
-   auto                       refund_itr = refunds_table.find(account.value);
+   eosiosystem::refunds_table  refunds_table(config.system_contract, account.value);
+   auto                        refund_itr = refunds_table.find(account.value);
    if (refund_itr != refunds_table.end()) {
       refund = *refund_itr;
    }
@@ -44,7 +43,6 @@ namespace api {
 
    eosiosystem::rex_balance rexbal;
    eosiosystem::rex_fund    rexfund;
-
    if (eosiosystem::system_contract::rex_system_initialized()) {
       // get rexbal entry for the account
       eosiosystem::rex_balance_table rexbal_table(config.system_contract, config.system_contract.value);
