@@ -1,0 +1,92 @@
+#pragma once
+
+#include <eosio.msig/eosio.msig.hpp>
+#include <eosio.system/eosio.system.hpp>
+#include <eosio.token/eosio.token.hpp>
+#include <eosio/contract.hpp>
+#include <eosio/singleton.hpp>
+
+using namespace eosio;
+using namespace std;
+
+namespace api {
+
+struct get_account_response
+{
+   name                                          account;
+   asset                                         balance;
+   std::vector<eosiosystem::delegated_bandwidth> delegations;
+   std::vector<eosio::multisig::proposal>        proposals;
+   eosiosystem::refund_request                   refund;
+   eosiosystem::rex_balance                      rexbal;
+   eosiosystem::rex_fund                         rexfund;
+};
+
+struct token_definition
+{
+   name   contract;
+   symbol symbol;
+};
+
+class [[eosio::contract("api")]] api : public contract
+{
+public:
+   using contract::contract;
+
+   struct [[eosio::table("config")]] config_row
+   {
+      name   system_contract       = name("eosio");
+      name   system_contract_msig  = name("eosio.msig");
+      name   system_token_contract = name("eosio.token");
+      symbol system_token_symbol   = symbol("EOS", 4);
+   };
+   typedef eosio::singleton<"config"_n, config_row> config_table;
+
+   struct [[eosio::table("tokens")]] token_row
+   {
+      uint64_t id;
+      name     contract;
+      symbol   symbol;
+      uint64_t primary_key() const { return id; }
+   };
+   typedef eosio::multi_index<"tokens"_n, token_row> token_table;
+
+   [[eosio::action]] void addtoken(const token_definition token);
+   [[eosio::action]] void addtokens(const std::vector<token_definition> tokens);
+   [[eosio::action]] void removetoken(const uint64_t id);
+   [[eosio::action]] void setconfig(const name   system_contract,
+                                    const name   system_contract_msig,
+                                    const name   system_token_contract,
+                                    const symbol system_token_symbol);
+   /**
+    * getaccount readonly action
+    */
+   [[eosio::action, eosio::read_only]] get_account_response getaccount(const name account);
+   using getaccount_action = action_wrapper<"getaccount"_n, &api::getaccount>;
+
+   [[eosio::action, eosio::read_only]] std::vector<asset> getbalances(const name                          account,
+                                                                      const std::vector<token_definition> tokens);
+   using getbalances_action = action_wrapper<"getbalances"_n, &api::getbalances>;
+
+   [[eosio::action, eosio::read_only]] std::vector<token_definition> gettokens();
+   using gettokens_action = action_wrapper<"gettokens"_n, &api::gettokens>;
+
+#ifdef DEBUG
+   [[eosio::action]] void wipe();
+   [[eosio::action]] void reset();
+#endif
+
+private:
+   void                          add_token(const token_definition token);
+   std::vector<token_definition> get_token_definitions();
+
+#ifdef DEBUG
+   template <typename T>
+   void clear_table(T& table, uint64_t rows_to_clear);
+   void reset_singletons();
+   void wipe_singletons();
+   void wipe_tables();
+#endif
+};
+
+} // namespace api
