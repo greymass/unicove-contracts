@@ -68,31 +68,13 @@ namespace api {
                                .rexfund     = rexfund};
 }
 
-std::vector<token_definition> api::get_token_definitions()
-{
-   std::vector<token_definition> result;
-   token_table                   _tokens(get_self(), get_self().value);
-   auto                          token_itr = _tokens.begin();
-   while (token_itr != _tokens.end()) {
-      result.push_back({.contract = token_itr->contract, .symbol = token_itr->symbol});
-      token_itr++;
-   }
-   return result;
-}
-
-[[eosio::action, eosio::read_only]] std::vector<token_definition> api::gettokens() { return get_token_definitions(); }
-
 [[eosio::action, eosio::read_only]] std::vector<asset> api::getbalances(const name                          account,
                                                                         const std::vector<token_definition> tokens)
 {
    std::vector<asset> balances;
+   check(tokens.size() > 0, "tokens must not be empty");
 
-   std::vector<token_definition> token_definitions = tokens;
-   if (token_definitions.size() == 0) {
-      token_definitions = get_token_definitions();
-   }
-
-   for (const auto& token : token_definitions) {
+   for (const auto& token : tokens) {
       eosio::token::accounts _accounts(token.contract, account.value);
       auto                   balance_itr = _accounts.find(token.symbol.code().raw());
       if (balance_itr != _accounts.end()) {
@@ -103,35 +85,6 @@ std::vector<token_definition> api::get_token_definitions()
    }
 
    return balances;
-}
-
-void api::add_token(const token_definition token)
-{
-   require_auth(get_self());
-   token_table tokens(get_self(), get_self().value);
-   tokens.emplace(get_self(), [&](auto& row) {
-      row.id       = tokens.available_primary_key();
-      row.contract = token.contract;
-      row.symbol   = token.symbol;
-   });
-}
-
-[[eosio::action]] void api::addtoken(const token_definition token) { add_token(token); }
-
-[[eosio::action]] void api::addtokens(const std::vector<token_definition> tokens)
-{
-   for (const auto& token : tokens) {
-      add_token(token);
-   }
-}
-
-[[eosio::action]] void api::removetoken(const uint64_t id)
-{
-   require_auth(get_self());
-   token_table tokens(get_self(), get_self().value);
-   auto        token_itr = tokens.find(id);
-   check(token_itr != tokens.end(), "token not found");
-   tokens.erase(token_itr);
 }
 
 [[eosio::action]] void api::setconfig(const name   system_contract,

@@ -24,8 +24,9 @@ void api::wipe_singletons()
 
 void api::wipe_tables()
 {
-   token_table tokens(get_self(), get_self().value);
-   clear_table(tokens, -1);
+   // e.g.
+   //    token_table tokens(get_self(), get_self().value);
+   //    clear_table(tokens, -1);
 }
 
 [[eosio::action]] void api::wipe()
