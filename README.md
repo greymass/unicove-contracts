@@ -1,11 +1,20 @@
-Setup
+# Unicove Smart Contract(s)
 
-1. Rename `src/api` folder to name of contract.
-2. Rename `src/apiapi` to napiact.
-3. Rename `src/apiapi/api.hapioapi
-4. Rename `src/apicpp` apiontract.
-5. Rename `test/api of contract.
-6. Rename `test/api.apiof contract.
-7. Rename `src/apisapime of contract.
-8. Rename `src/apirapiname of contract.
-9. Search and replace in project to replace `apime of contract.
+Smart contracts providing readonly actions to serve as APIs.
+
+Initially these contracts are being designed to meet the needs of Unicove.com and to experiment with the limitations of readonly APIs. Ideally these contracts would mature into system level contracts which are capable of meeting the needs of many wallets, explorers, and other types of applications.
+
+## Contracts
+
+- `api`: A collection of readonly actions to replace the native chain APIs.
+
+## Developing
+
+This project makes use of `make` to coordinate the different build tools (Antelope CDT, Bun, VeRT, Wharf, etc). These will all need to be installed prior to development.
+
+A number of the important commands are:
+
+- `make test`: Compiles the contract with the `DEBUG` flag, generates the contract TypeScript code using Wharf, and then uses Bun to run the VeRT unit tests.
+- `make build`: Compiles the contract with the `DEBUG` flag.
+- `make build/production`: Compiles the contract for production.
+- `make codegen`: Generates the contract TypeScript code against the currently compiled contract.
