@@ -47,14 +47,14 @@ public:
                                     const name   system_token_contract,
                                     const symbol system_token_symbol);
    /**
-    * getaccount readonly action
+    * account readonly action
     */
-   [[eosio::action, eosio::read_only]] get_account_response getaccount(const name account);
-   using getaccount_action = action_wrapper<"getaccount"_n, &api::getaccount>;
+   [[eosio::action, eosio::read_only]] get_account_response account(const name account);
+   using account_action = action_wrapper<"account"_n, &api::account>;
 
-   [[eosio::action, eosio::read_only]] std::vector<asset> getbalances(const name                          account,
-                                                                      const std::vector<token_definition> tokens);
-   using getbalances_action = action_wrapper<"getbalances"_n, &api::getbalances>;
+   [[eosio::action, eosio::read_only]] std::vector<asset> balances(const name                          account,
+                                                                   const std::vector<token_definition> tokens);
+   using balances_action = action_wrapper<"balances"_n, &api::balances>;
 
 #ifdef DEBUG
    [[eosio::action]] void wipe();

@@ -2,7 +2,7 @@
 
 namespace api {
 
-[[eosio::action, eosio::read_only]] get_account_response api::getaccount(const name account)
+[[eosio::action, eosio::read_only]] get_account_response api::account(const name account)
 {
    config_table _config(get_self(), get_self().value);
    auto         config = _config.get_or_default();
@@ -68,8 +68,8 @@ namespace api {
                                .rexfund     = rexfund};
 }
 
-[[eosio::action, eosio::read_only]] std::vector<asset> api::getbalances(const name                          account,
-                                                                        const std::vector<token_definition> tokens)
+[[eosio::action, eosio::read_only]] std::vector<asset> api::balances(const name                          account,
+                                                                     const std::vector<token_definition> tokens)
 {
    std::vector<asset> balances;
    check(tokens.size() > 0, "tokens must not be empty");
