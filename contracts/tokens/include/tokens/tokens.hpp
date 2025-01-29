@@ -9,7 +9,7 @@
 using namespace eosio;
 using namespace std;
 
-namespace api {
+namespace tokens {
 
 struct get_account_response
 {
@@ -28,19 +28,10 @@ struct token_definition
    symbol symbol;
 };
 
-class [[eosio::contract("api")]] api : public contract
+class [[eosio::contract("tokens")]] tokens : public contract
 {
 public:
    using contract::contract;
-
-   struct [[eosio::table("config")]] config_row
-   {
-      name   system_contract       = name("eosio");
-      name   system_contract_msig  = name("eosio.msig");
-      name   system_token_contract = name("eosio.token");
-      symbol system_token_symbol   = symbol("EOS", 4);
-   };
-   typedef eosio::singleton<"config"_n, config_row> config_table;
 
    struct [[eosio::table("tokens")]] token_row
    {
@@ -54,22 +45,13 @@ public:
    [[eosio::action]] void addtoken(const token_definition token);
    [[eosio::action]] void addtokens(const std::vector<token_definition> tokens);
    [[eosio::action]] void removetoken(const uint64_t id);
-   [[eosio::action]] void setconfig(const name   system_contract,
-                                    const name   system_contract_msig,
-                                    const name   system_token_contract,
-                                    const symbol system_token_symbol);
-   /**
-    * getaccount readonly action
-    */
-   [[eosio::action, eosio::read_only]] get_account_response getaccount(const name account);
-   using getaccount_action = action_wrapper<"getaccount"_n, &api::getaccount>;
 
    [[eosio::action, eosio::read_only]] std::vector<asset> getbalances(const name                          account,
                                                                       const std::vector<token_definition> tokens);
-   using getbalances_action = action_wrapper<"getbalances"_n, &api::getbalances>;
+   using getbalances_action = action_wrapper<"getbalances"_n, &tokens::getbalances>;
 
    [[eosio::action, eosio::read_only]] std::vector<token_definition> gettokens();
-   using gettokens_action = action_wrapper<"gettokens"_n, &api::gettokens>;
+   using gettokens_action = action_wrapper<"gettokens"_n, &tokens::gettokens>;
 
 #ifdef DEBUG
    [[eosio::action]] void wipe();
@@ -89,4 +71,4 @@ private:
 #endif
 };
 
-} // namespace api
+} // namespace tokens
