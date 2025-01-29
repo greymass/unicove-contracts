@@ -68,8 +68,8 @@ namespace api {
                                .rexfund     = rexfund};
 }
 
-[[eosio::action, eosio::read_only]] std::vector<asset> api::balances(const name                          account,
-                                                                     const std::vector<token_definition> tokens)
+[[eosio::action, eosio::read_only]] std::vector<asset>
+api::balances(const name account, const std::vector<token_definition> tokens, const bool zerobalances = true)
 {
    std::vector<asset> balances;
    check(tokens.size() > 0, "tokens must not be empty");
@@ -79,7 +79,7 @@ namespace api {
       auto                   balance_itr = _accounts.find(token.symbol.code().raw());
       if (balance_itr != _accounts.end()) {
          balances.push_back(balance_itr->balance);
-      } else {
+      } else if (zerobalances) {
          balances.push_back(asset(0, token.symbol));
       }
    }

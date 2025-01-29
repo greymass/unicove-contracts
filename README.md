@@ -7,6 +7,7 @@ Initially these contracts are being designed to meet the needs of Unicove.com an
 ## Contracts
 
 - `api`: A collection of readonly actions to replace the native chain APIs.
+- `tokens`: Unused currently, but the start of a token index.
 
 ## Developing
 

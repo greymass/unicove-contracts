@@ -52,8 +52,8 @@ public:
    [[eosio::action, eosio::read_only]] get_account_response account(const name account);
    using account_action = action_wrapper<"account"_n, &api::account>;
 
-   [[eosio::action, eosio::read_only]] std::vector<asset> balances(const name                          account,
-                                                                   const std::vector<token_definition> tokens);
+   [[eosio::action, eosio::read_only]] std::vector<asset>
+   balances(const name account, const std::vector<token_definition> tokens, const bool zerobalances);
    using balances_action = action_wrapper<"balances"_n, &api::balances>;
 
 #ifdef DEBUG
