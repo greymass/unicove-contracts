@@ -68,6 +68,70 @@ namespace api {
                                .rexfund     = rexfund};
 }
 
+[[eosio::action, eosio::read_only]] get_network_response api::network()
+{
+   config_table _config(get_self(), get_self().value);
+   auto         config = _config.get_or_default();
+
+   eosiosystem::global_state_singleton global_table(config.system_contract, config.system_contract.value);
+   auto                                global = global_table.get_or_default();
+
+   eosiosystem::exchange_state ram;
+   eosiosystem::rammarket      rammarket_table(config.system_contract, config.system_contract.value);
+   auto                        rammarket_itr = rammarket_table.find(config.system_ramcore_symbol.raw());
+   if (rammarket_itr != rammarket_table.end()) {
+      ram = *rammarket_itr;
+   }
+
+   eosiosystem::rex_pool       rex;
+   eosiosystem::rex_pool_table rex_table(config.system_contract, config.system_contract.value);
+   auto                        rex_itr = rex_table.begin();
+   if (rex_itr != rex_table.end()) {
+      rex = *rex_itr;
+   }
+
+   eosiosystem::powerup_state_singleton powerup_table(config.system_contract, 0);
+   auto                                 powerup = powerup_table.get_or_default();
+
+   token_definition def = {
+      .contract = config.system_token_contract,
+      .symbol   = config.system_token_symbol,
+   };
+   const token_supply token = get_token_supply(def);
+
+   return get_network_response{.global = global, .ram = ram, .rex = rex, .powerup = powerup, .token = token};
+}
+
+token_supply api::get_token_supply(const token_definition def)
+{
+   token_supply ts = {
+      .def    = def,
+      .locked = asset(0, def.symbol),
+      .max    = asset(0, def.symbol),
+      .supply = asset(0, def.symbol),
+   };
+
+   eosio::token::stats stats_table(def.contract, def.symbol.code().raw());
+   auto                stats_itr = stats_table.find(def.symbol.code().raw());
+   if (stats_itr != stats_table.end()) {
+      ts.supply = stats_itr->supply;
+      ts.max    = stats_itr->max_supply;
+   }
+
+   eosio::token::accounts _accounts(def.contract, def.contract.value);
+   auto                   balance_itr = _accounts.find(def.symbol.code().raw());
+   if (balance_itr != _accounts.end()) {
+      ts.locked = balance_itr->balance;
+   }
+
+   return ts;
+}
+
+[[eosio::action, eosio::read_only]] token_supply api::supply(const token_definition definition)
+{
+   return get_token_supply(def);
+}
+
 [[eosio::action, eosio::read_only]] std::vector<asset>
 api::balances(const name account, const std::vector<token_definition> tokens, const bool zerobalances = true)
 {

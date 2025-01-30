@@ -28,6 +28,23 @@ struct token_definition
    symbol symbol;
 };
 
+struct token_supply
+{
+   token_definition def    = {.contract = name("eosio.token"), .symbol = symbol("EOS", 4)};
+   asset            locked = asset(0, symbol("EOS", 4));
+   asset            max    = asset(0, symbol("EOS", 4));
+   asset            supply = asset(0, symbol("EOS", 4));
+};
+
+struct get_network_response
+{
+   eosiosystem::eosio_global_state global;
+   eosiosystem::powerup_state      powerup;
+   eosiosystem::exchange_state     ram;
+   eosiosystem::rex_pool           rex;
+   token_supply                    token;
+};
+
 class [[eosio::contract("api")]] api : public contract
 {
 public:
@@ -39,6 +56,9 @@ public:
       name   system_contract_msig  = name("eosio.msig");
       name   system_token_contract = name("eosio.token");
       symbol system_token_symbol   = symbol("EOS", 4);
+      symbol system_ramcore_symbol = eosiosystem::system_contract::ramcore_symbol;
+      symbol system_ram_symbol     = eosiosystem::system_contract::ram_symbol;
+      symbol system_rex_symbol     = eosiosystem::system_contract::rex_symbol;
    };
    typedef eosio::singleton<"config"_n, config_row> config_table;
 
@@ -56,12 +76,20 @@ public:
    balances(const name account, const std::vector<token_definition> tokens, const bool zerobalances);
    using balances_action = action_wrapper<"balances"_n, &api::balances>;
 
+   [[eosio::action, eosio::read_only]] get_network_response network();
+   using network_action = action_wrapper<"network"_n, &api::network>;
+
+   [[eosio::action, eosio::read_only]] token_supply supply(const token_definition def);
+   using supply_action = action_wrapper<"supply"_n, &api::supply>;
+
 #ifdef DEBUG
    [[eosio::action]] void wipe();
    [[eosio::action]] void reset();
 #endif
 
 private:
+   token_supply get_token_supply(const token_definition def);
+
 #ifdef DEBUG
    template <typename T>
    void clear_table(T& table, uint64_t rows_to_clear);
