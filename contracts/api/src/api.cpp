@@ -119,6 +119,9 @@ namespace api {
 
 token_supply api::get_token_supply(const token_definition def)
 {
+   config_table _config(get_self(), get_self().value);
+   auto         config = _config.get_or_default();
+
    token_supply ts = {
       .def    = def,
       .locked = asset(0, def.symbol),
@@ -133,7 +136,7 @@ token_supply api::get_token_supply(const token_definition def)
       ts.max    = stats_itr->max_supply;
    }
 
-   eosio::token::accounts _accounts(def.contract, def.contract.value);
+   eosio::token::accounts _accounts(def.contract, config.system_contract.value);
    auto                   balance_itr = _accounts.find(def.symbol.code().raw());
    if (balance_itr != _accounts.end()) {
       ts.locked = balance_itr->balance;
