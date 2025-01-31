@@ -137,7 +137,7 @@ token_supply api::get_token_supply(const token_definition def)
 
 [[eosio::action, eosio::read_only]] token_supply api::supply(const token_definition definition)
 {
-   return get_token_supply(def);
+   return get_token_supply(definition);
 }
 
 [[eosio::action, eosio::read_only]] std::vector<asset>
