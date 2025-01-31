@@ -80,7 +80,7 @@ namespace api {
 
 [[eosio::action, eosio::read_only]] get_available_response api::available(const name account)
 {
-   return get_available_response{.account = account, .available = is_account(account)};
+   return get_available_response{.account = account, .available = !is_account(account)};
 }
 
 [[eosio::action, eosio::read_only]] get_network_response api::network()
