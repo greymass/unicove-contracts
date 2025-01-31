@@ -4,6 +4,8 @@ namespace api {
 
 [[eosio::action, eosio::read_only]] get_account_response api::account(const name account)
 {
+   check(is_account(account), "account does not exist");
+
    config_table _config(get_self(), get_self().value);
    auto         config = _config.get_or_default();
 
