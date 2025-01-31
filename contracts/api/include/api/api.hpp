@@ -37,10 +37,11 @@ struct token_definition
 
 struct token_supply
 {
-   token_definition def    = {.contract = name("eosio.token"), .symbol = symbol("EOS", 4)};
-   asset            locked = asset(0, symbol("EOS", 4));
-   asset            max    = asset(0, symbol("EOS", 4));
-   asset            supply = asset(0, symbol("EOS", 4));
+   token_definition def         = {.contract = name("eosio.token"), .symbol = symbol("EOS", 4)};
+   asset            circulating = asset(0, symbol("EOS", 4));
+   asset            locked      = asset(0, symbol("EOS", 4));
+   asset            max         = asset(0, symbol("EOS", 4));
+   asset            supply      = asset(0, symbol("EOS", 4));
 };
 
 struct get_network_response

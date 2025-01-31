@@ -123,23 +123,26 @@ token_supply api::get_token_supply(const token_definition def)
    auto         config = _config.get_or_default();
 
    token_supply ts = {
-      .def    = def,
-      .locked = asset(0, def.symbol),
-      .max    = asset(0, def.symbol),
-      .supply = asset(0, def.symbol),
+      .def         = def,
+      .circulating = asset(0, def.symbol),
+      .locked      = asset(0, def.symbol),
+      .max         = asset(0, def.symbol),
+      .supply      = asset(0, def.symbol),
    };
 
    eosio::token::stats stats_table(def.contract, def.symbol.code().raw());
    auto                stats_itr = stats_table.find(def.symbol.code().raw());
    if (stats_itr != stats_table.end()) {
-      ts.supply = stats_itr->supply;
-      ts.max    = stats_itr->max_supply;
+      ts.supply      = stats_itr->supply;
+      ts.max         = stats_itr->max_supply;
+      ts.circulating = ts.supply;
    }
 
    eosio::token::accounts _accounts(def.contract, config.system_contract.value);
    auto                   balance_itr = _accounts.find(def.symbol.code().raw());
    if (balance_itr != _accounts.end()) {
       ts.locked = balance_itr->balance;
+      ts.circulating -= ts.locked;
    }
 
    return ts;
