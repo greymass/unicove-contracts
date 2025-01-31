@@ -88,8 +88,38 @@ public:
    [[eosio::action, eosio::read_only]] get_network_response network();
    using network_action = action_wrapper<"network"_n, &api::network>;
 
+   [[eosio::action, eosio::read_only]] eosiosystem::powerup_state powerup();
+   using powerup_action = action_wrapper<"powerup"_n, &api::powerup>;
+
+   [[eosio::action, eosio::read_only]] eosiosystem::rex_pool rex();
+   using rex_action = action_wrapper<"rex"_n, &api::rex>;
+
+   [[eosio::action, eosio::read_only]] eosiosystem::eosio_global_state global();
+   using global_action = action_wrapper<"global"_n, &api::global>;
+
+   [[eosio::action, eosio::read_only]] eosiosystem::exchange_state ram();
+   using ram_action = action_wrapper<"ram"_n, &api::ram>;
+
    [[eosio::action, eosio::read_only]] token_supply supply(const token_definition def);
    using supply_action = action_wrapper<"supply"_n, &api::supply>;
+
+   [[eosio::action, eosio::read_only]] eosiosystem::refund_request refund(const name account);
+   using refund_action = action_wrapper<"refund"_n, &api::refund>;
+
+   [[eosio::action, eosio::read_only]] std::vector<eosiosystem::delegated_bandwidth> delegations(const name account);
+   using delegated_action = action_wrapper<"delegations"_n, &api::delegations>;
+
+   [[eosio::action, eosio::read_only]] std::vector<eosio::multisig::proposal> proposals(const name account);
+   using proposals_action = action_wrapper<"proposals"_n, &api::proposals>;
+
+   [[eosio::action, eosio::read_only]] eosiosystem::rex_balance rexbal(const name account);
+   using rexbal_action = action_wrapper<"rexbal"_n, &api::rexbal>;
+
+   [[eosio::action, eosio::read_only]] eosiosystem::rex_fund rexfund(const name account);
+   using rexfund_action = action_wrapper<"rexfund"_n, &api::rexfund>;
+
+   [[eosio::action, eosio::read_only]] eosiosystem::voter_info votes(const name account);
+   using vote_action = action_wrapper<"votes"_n, &api::votes>;
 
 #ifdef DEBUG
    [[eosio::action]] void wipe();
@@ -97,7 +127,19 @@ public:
 #endif
 
 private:
-   token_supply get_token_supply(const token_definition def);
+   config_row                                    get_config();
+   token_supply                                  get_token_supply(const token_definition def);
+   eosiosystem::eosio_global_state               get_global(const config_row config);
+   eosiosystem::exchange_state                   get_rammarket(const config_row config);
+   eosiosystem::rex_pool                         get_rex_pool(const config_row config);
+   eosiosystem::powerup_state                    get_powerup(const config_row config);
+   eosiosystem::refund_request                   get_refund_request(const config_row config, const name account);
+   eosiosystem::rex_balance                      get_rex_balance(const config_row config, const name account);
+   eosiosystem::rex_fund                         get_rex_fund(const config_row config, const name account);
+   eosiosystem::voter_info                       get_voter_info(const config_row config, const name account);
+   std::vector<eosiosystem::delegated_bandwidth> get_delegated_bandwidth(const config_row config, const name account);
+   std::vector<eosio::multisig::proposal>        get_msig_proposals(const config_row config, const name account);
+   asset                                         get_system_token_balance(const config_row config, const name account);
 
 #ifdef DEBUG
    template <typename T>

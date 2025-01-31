@@ -2,30 +2,42 @@
 
 namespace api {
 
-[[eosio::action, eosio::read_only]] get_account_response api::account(const name account)
+api::config_row api::get_config()
 {
-   check(is_account(account), "account does not exist");
-
    config_table _config(get_self(), get_self().value);
-   auto         config = _config.get_or_default();
+   return _config.get_or_default();
+}
 
-   // get core token balance for the account
+asset api::get_system_token_balance(const api::config_row config, const name account)
+{
    asset                  balance = asset(0, config.system_token_symbol);
    eosio::token::accounts balance_table(config.system_token_contract, account.value);
    auto                   balance_itr = balance_table.find(config.system_token_symbol.code().raw());
    if (balance_itr != balance_table.end()) {
       balance = balance_itr->balance;
    }
+   return balance;
+}
 
-   // get pending refund for the account
+eosiosystem::refund_request api::get_refund_request(const api::config_row config, const name account)
+{
    eosiosystem::refund_request refund;
    eosiosystem::refunds_table  refunds_table(config.system_contract, account.value);
    auto                        refund_itr = refunds_table.find(account.value);
    if (refund_itr != refunds_table.end()) {
       refund = *refund_itr;
    }
+   return refund;
+}
 
-   // get all delegated balances for the account
+[[eosio::action, eosio::read_only]] eosiosystem::refund_request api::refund(const name account)
+{
+   return get_refund_request(get_config(), account);
+}
+
+std::vector<eosiosystem::delegated_bandwidth> api::get_delegated_bandwidth(const api::config_row config,
+                                                                           const name            account)
+{
    std::vector<eosiosystem::delegated_bandwidth> dbw_rows;
    eosiosystem::del_bandwidth_table              dbw_table(config.system_contract, account.value);
    auto                                          dbw_itr = dbw_table.begin();
@@ -33,8 +45,16 @@ namespace api {
       dbw_rows.push_back(*dbw_itr);
       dbw_itr++;
    }
+   return dbw_rows;
+}
 
-   // get all msig proposals from the account
+[[eosio::action, eosio::read_only]] std::vector<eosiosystem::delegated_bandwidth> api::delegations(const name account)
+{
+   return get_delegated_bandwidth(get_config(), account);
+}
+
+std::vector<eosio::multisig::proposal> api::get_msig_proposals(const api::config_row config, const name account)
+{
    std::vector<eosio::multisig::proposal> msig_rows;
    eosio::multisig::proposals             msig_table(config.system_contract_msig, account.value);
    auto                                   msig_itr = msig_table.begin();
@@ -42,36 +62,83 @@ namespace api {
       msig_rows.push_back(*msig_itr);
       msig_itr++;
    }
+   return msig_rows;
+}
 
+[[eosio::action, eosio::read_only]] std::vector<eosio::multisig::proposal> api::proposals(const name account)
+{
+   return get_msig_proposals(get_config(), account);
+}
+
+eosiosystem::rex_balance api::get_rex_balance(const api::config_row config, const name account)
+{
    eosiosystem::rex_balance rexbal;
-   eosiosystem::rex_fund    rexfund;
    if (eosiosystem::system_contract::rex_system_initialized()) {
-      // get rexbal entry for the account
       eosiosystem::rex_balance_table rexbal_table(config.system_contract, config.system_contract.value);
       auto                           rex_itr = rexbal_table.find(account.value);
       if (rex_itr != rexbal_table.end()) {
          rexbal = *rex_itr;
       }
+   }
+   return rexbal;
+}
 
-      // get rexfund entry for the account
+[[eosio::action, eosio::read_only]] eosiosystem::rex_balance api::rexbal(const name account)
+{
+   return get_rex_balance(get_config(), account);
+}
+
+eosiosystem::rex_fund api::get_rex_fund(const api::config_row config, const name account)
+{
+   eosiosystem::rex_fund rexfund;
+   if (eosiosystem::system_contract::rex_system_initialized()) {
       eosiosystem::rex_fund_table rexfund_table(config.system_contract, config.system_contract.value);
       auto                        rexfund_itr = rexfund_table.find(account.value);
       if (rexfund_itr != rexfund_table.end()) {
          rexfund = *rexfund_itr;
       }
    }
+   return rexfund;
+}
 
+[[eosio::action, eosio::read_only]] eosiosystem::rex_fund api::rexfund(const name account)
+{
+   return get_rex_fund(get_config(), account);
+}
+
+eosiosystem::voter_info api::get_voter_info(const api::config_row config, const name account)
+{
    eosiosystem::voter_info   vote;
    eosiosystem::voters_table voters_table(config.system_contract, config.system_contract.value);
    auto                      voter_itr = voters_table.find(account.value);
    if (voter_itr != voters_table.end()) {
       vote = *voter_itr;
    }
+   return vote;
+}
+
+[[eosio::action, eosio::read_only]] eosiosystem::voter_info api::votes(const name account)
+{
+   return get_voter_info(get_config(), account);
+}
+
+[[eosio::action, eosio::read_only]] get_account_response api::account(const name account)
+{
+   check(is_account(account), "account does not exist");
+
+   auto config      = get_config();
+   auto balance     = get_system_token_balance(config, account);
+   auto refund      = get_refund_request(config, account);
+   auto delegations = get_delegated_bandwidth(config, account);
+   auto proposals   = get_msig_proposals(config, account);
+   auto rexbal      = get_rex_balance(config, account);
+   auto rexfund     = get_rex_fund(config, account);
+   auto vote        = get_voter_info(config, account);
 
    return get_account_response{.account     = account,
                                .balance     = balance,
-                               .delegations = dbw_rows,
-                               .proposals   = msig_rows,
+                               .delegations = delegations,
+                               .proposals   = proposals,
                                .refund      = refund,
                                .rexbal      = rexbal,
                                .rexfund     = rexfund,
@@ -83,44 +150,69 @@ namespace api {
    return get_available_response{.account = account, .available = !is_account(account)};
 }
 
-[[eosio::action, eosio::read_only]] get_network_response api::network()
+eosiosystem::eosio_global_state api::get_global(const api::config_row config)
 {
-   config_table _config(get_self(), get_self().value);
-   auto         config = _config.get_or_default();
-
    eosiosystem::global_state_singleton global_table(config.system_contract, config.system_contract.value);
    auto                                global = global_table.get_or_default();
+   return global;
+}
 
+[[eosio::action, eosio::read_only]] eosiosystem::eosio_global_state api::global() { return get_global(get_config()); }
+
+eosiosystem::exchange_state api::get_rammarket(const api::config_row config)
+{
    eosiosystem::exchange_state ram;
    eosiosystem::rammarket      rammarket_table(config.system_contract, config.system_contract.value);
    auto                        rammarket_itr = rammarket_table.find(config.system_ramcore_symbol.raw());
    if (rammarket_itr != rammarket_table.end()) {
       ram = *rammarket_itr;
    }
+   return ram;
+}
 
+[[eosio::action, eosio::read_only]] eosiosystem::exchange_state api::ram() { return get_rammarket(get_config()); }
+
+eosiosystem::rex_pool api::get_rex_pool(const api::config_row config)
+{
    eosiosystem::rex_pool       rex;
    eosiosystem::rex_pool_table rex_table(config.system_contract, config.system_contract.value);
    auto                        rex_itr = rex_table.begin();
    if (rex_itr != rex_table.end()) {
       rex = *rex_itr;
    }
+   return rex;
+}
 
+[[eosio::action, eosio::read_only]] eosiosystem::rex_pool api::rex() { return get_rex_pool(get_config()); }
+
+eosiosystem::powerup_state api::get_powerup(const api::config_row config)
+{
    eosiosystem::powerup_state_singleton powerup_table(config.system_contract, 0);
    auto                                 powerup = powerup_table.get_or_default();
+   return powerup;
+}
+
+[[eosio::action, eosio::read_only]] eosiosystem::powerup_state api::powerup() { return get_powerup(get_config()); }
+
+[[eosio::action, eosio::read_only]] get_network_response api::network()
+{
+   auto config = get_config();
 
    token_definition def = {
       .contract = config.system_token_contract,
       .symbol   = config.system_token_symbol,
    };
-   const token_supply token = get_token_supply(def);
 
-   return get_network_response{.global = global, .ram = ram, .rex = rex, .powerup = powerup, .token = token};
+   return get_network_response{.global  = get_global(config),
+                               .ram     = get_rammarket(config),
+                               .rex     = get_rex_pool(config),
+                               .powerup = get_powerup(config),
+                               .token   = get_token_supply(def)};
 }
 
 token_supply api::get_token_supply(const token_definition def)
 {
-   config_table _config(get_self(), get_self().value);
-   auto         config = _config.get_or_default();
+   auto config = get_config();
 
    token_supply ts = {
       .def         = def,
