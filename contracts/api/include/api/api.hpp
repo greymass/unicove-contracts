@@ -20,6 +20,7 @@ struct get_account_response
    eosiosystem::refund_request                   refund;
    eosiosystem::rex_balance                      rexbal;
    eosiosystem::rex_fund                         rexfund;
+   eosiosystem::voter_info                       vote;
 };
 
 struct token_definition

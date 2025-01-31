@@ -59,13 +59,21 @@ namespace api {
       }
    }
 
+   eosiosystem::voter_info   vote;
+   eosiosystem::voters_table voters_table(config.system_contract, config.system_contract.value);
+   auto                      voter_itr = voters_table.find(account.value);
+   if (voter_itr != voters_table.end()) {
+      vote = *voter_itr;
+   }
+
    return get_account_response{.account     = account,
                                .balance     = balance,
                                .delegations = dbw_rows,
                                .proposals   = msig_rows,
                                .refund      = refund,
                                .rexbal      = rexbal,
-                               .rexfund     = rexfund};
+                               .rexfund     = rexfund,
+                               .vote        = vote};
 }
 
 [[eosio::action, eosio::read_only]] get_network_response api::network()
