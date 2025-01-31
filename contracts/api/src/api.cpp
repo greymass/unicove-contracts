@@ -78,6 +78,11 @@ namespace api {
                                .vote        = vote};
 }
 
+[[eosio::action, eosio::read_only]] get_available_response api::available(const name account)
+{
+   return get_available_response{.account = account, .available = is_account(account)};
+}
+
 [[eosio::action, eosio::read_only]] get_network_response api::network()
 {
    config_table _config(get_self(), get_self().value);

@@ -23,6 +23,12 @@ struct get_account_response
    eosiosystem::voter_info                       vote;
 };
 
+struct get_available_response
+{
+   name account;
+   bool available;
+};
+
 struct token_definition
 {
    name   contract;
@@ -67,11 +73,12 @@ public:
                                     const name   system_contract_msig,
                                     const name   system_token_contract,
                                     const symbol system_token_symbol);
-   /**
-    * account readonly action
-    */
+
    [[eosio::action, eosio::read_only]] get_account_response account(const name account);
    using account_action = action_wrapper<"account"_n, &api::account>;
+
+   [[eosio::action, eosio::read_only]] get_available_response available(const name account);
+   using available_action = action_wrapper<"available"_n, &api::available>;
 
    [[eosio::action, eosio::read_only]] std::vector<asset>
    balances(const name account, const std::vector<token_definition> tokens, const bool zerobalances);
