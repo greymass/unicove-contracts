@@ -14,6 +14,7 @@ namespace api {
 struct get_account_response
 {
    name                                          account;
+   checksum256                                   contracthash;
    asset                                         balance;
    std::vector<eosiosystem::delegated_bandwidth> delegations;
    std::vector<eosio::multisig::proposal>        proposals;
@@ -84,6 +85,9 @@ public:
    [[eosio::action, eosio::read_only]] std::vector<asset>
    balances(const name account, const std::vector<token_definition> tokens, const bool zerobalances);
    using balances_action = action_wrapper<"balances"_n, &api::balances>;
+
+   [[eosio::action, eosio::read_only]] eosiosystem::abi_hash contracthash(const name account);
+   using contracthash_action = action_wrapper<"contracthash"_n, &api::contracthash>;
 
    [[eosio::action, eosio::read_only]] get_network_response network();
    using network_action = action_wrapper<"network"_n, &api::network>;

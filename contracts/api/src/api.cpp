@@ -122,27 +122,41 @@ eosiosystem::voter_info api::get_voter_info(const api::config_row config, const 
    return get_voter_info(get_config(), account);
 }
 
+eosiosystem::abi_hash get_contract_hash(const api::config_row config, const name account)
+{
+   eosiosystem::abi_hash                                  result;
+   eosio::multi_index<"abihash"_n, eosiosystem::abi_hash> abihash_table(config.system_contract,
+                                                                        config.system_contract.value);
+   auto                                                   abihash_itr = abihash_table.find(account.value);
+   if (abihash_itr != abihash_table.end() && abihash_itr->owner == account) {
+      result = *abihash_itr;
+   }
+   return result;
+}
+
 [[eosio::action, eosio::read_only]] get_account_response api::account(const name account)
 {
    check(is_account(account), "account does not exist");
 
-   auto config      = get_config();
-   auto balance     = get_system_token_balance(config, account);
-   auto refund      = get_refund_request(config, account);
-   auto delegations = get_delegated_bandwidth(config, account);
-   auto proposals   = get_msig_proposals(config, account);
-   auto rexbal      = get_rex_balance(config, account);
-   auto rexfund     = get_rex_fund(config, account);
-   auto vote        = get_voter_info(config, account);
+   auto config       = get_config();
+   auto contracthash = get_contract_hash(config, account);
+   auto balance      = get_system_token_balance(config, account);
+   auto refund       = get_refund_request(config, account);
+   auto delegations  = get_delegated_bandwidth(config, account);
+   auto proposals    = get_msig_proposals(config, account);
+   auto rexbal       = get_rex_balance(config, account);
+   auto rexfund      = get_rex_fund(config, account);
+   auto vote         = get_voter_info(config, account);
 
-   return get_account_response{.account     = account,
-                               .balance     = balance,
-                               .delegations = delegations,
-                               .proposals   = proposals,
-                               .refund      = refund,
-                               .rexbal      = rexbal,
-                               .rexfund     = rexfund,
-                               .vote        = vote};
+   return get_account_response{.account      = account,
+                               .balance      = balance,
+                               .contracthash = contracthash.hash,
+                               .delegations  = delegations,
+                               .proposals    = proposals,
+                               .refund       = refund,
+                               .rexbal       = rexbal,
+                               .rexfund      = rexfund,
+                               .vote         = vote};
 }
 
 [[eosio::action, eosio::read_only]] get_available_response api::available(const name account)
@@ -262,6 +276,12 @@ api::balances(const name account, const std::vector<token_definition> tokens, co
    }
 
    return balances;
+}
+
+[[eosio::action, eosio::read_only]] eosiosystem::abi_hash api::contracthash(const name account)
+{
+   auto config = get_config();
+   return get_contract_hash(config, account);
 }
 
 [[eosio::action]] void api::setconfig(const name   system_contract,
