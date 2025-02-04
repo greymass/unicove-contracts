@@ -3,8 +3,8 @@
 ---
 
 spec_version: "0.2.0"
-title: account
-summary: 'Retrieve account information'
+title: 'Load Account State'
+summary: 'Read-only action to load the current state of an account.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -14,8 +14,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: available
-summary: 'Checks for existence of account by name'
+title: 'Check Name Available'
+summary: 'Read-only action to checks the availability of an account name.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -25,8 +25,19 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: balances
-summary: 'Retrieve token balance information'
+title: 'Load Balances'
+summary: 'Read-only action to load the token balances of the provided token contracts and symbols.'
+icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
+
+---
+
+<h1 class="contract">contracthash</h1>
+
+---
+
+spec_version: "0.2.0"
+title: 'Load Contract Hash'
+summary: 'Read-only action to load the hash of the contract deployed to an account.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -36,8 +47,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: delegations
-summary: 'Retrieve account delegated bandwidth'
+title: 'Load Delegations'
+summary: 'Read-only action to load any tokens delegated by an account.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -47,8 +58,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: global
-summary: 'Retrieve global state information'
+title: 'Load Global State'
+summary: 'Read-only action to load global state data.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -58,8 +69,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: network
-summary: 'Retrieve network information'
+title: 'Load Network State'
+summary: 'Read-only action to load the current state of the network.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -69,8 +80,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: powerup
-summary: 'Retrieve network powerup information'
+title: 'Load Powerup State'
+summary: 'Read-only action to load the current state of the powerup system contracts.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -80,8 +91,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: proposals
-summary: 'Retrieve account msig proposals'
+title: 'Load Account Proposals'
+summary: 'Read-only action to load multisig proposals that were proposed by an account.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -91,8 +102,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: ram
-summary: 'Retrieve network rammarket information'
+title: 'Load RAM Market State'
+summary: 'Read-only action to load the current state of the RAM Market.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -102,8 +113,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: refund
-summary: 'Retrieve account refund information'
+title: 'Load Refund'
+summary: 'Read-only action to find any pending refunds for an account.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -113,8 +124,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: rex
-summary: 'Retrieve network rexpool information'
+title: 'Load REX State'
+summary: 'Read-only action to load the current state of the REX contract.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -124,8 +135,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: rexbal
-summary: 'Retrieve account rexbal information'
+title: 'Load REX Balance'
+summary: 'Read-only action to load the EOS balance of an account idle in the REX contract.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -135,8 +146,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: rexfund
-summary: 'Retrieve network rexbal information'
+title: 'Load REX State'
+summary: 'Read-only action to load the REX state of an account in the REX contract.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -146,8 +157,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: setconfig
-summary: 'Set contract configuration'
+title: 'Set Contract Configuration'
+summary: 'Maintainer action to set the values of the config table to update how this contract operates.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -157,8 +168,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: supply
-summary: 'Retrieve token supply information'
+title: 'Load Token Supply'
+summary: 'Read-only action to load the supply information of a token.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -168,8 +179,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: votes
-summary: 'Retrieve token votes information'
+title: 'Load Account Votes'
+summary: 'Read-only action to load the votes cast by an account.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -179,8 +190,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: cleartable
-summary: 'DEBUG: cleartable action'
+title: 'DEBUG: Clear Table'
+summary: 'DEBUG: Removes all data from a table.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -190,8 +201,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: reset
-summary: 'DEBUG: reset action'
+title: 'DEBUG: Reset Contract State'
+summary: 'DEBUG: Resets the contract state to default values.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
@@ -201,8 +212,8 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 ---
 
 spec_version: "0.2.0"
-title: wipe
-summary: 'DEBUG: wipe action'
+title: 'DEBUG: Wipe Contract Data'
+summary: 'DEBUG: Removes all contract state.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
