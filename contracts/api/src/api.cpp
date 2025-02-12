@@ -284,6 +284,37 @@ api::balances(const name account, const std::vector<token_definition> tokens, co
    return get_contract_hash(config, account);
 }
 
+eosiosystem::rex_return_pool api::get_rex_return_pool(const api::config_row config)
+{
+   eosiosystem::rex_return_pool       rexretpool;
+   eosiosystem::rex_return_pool_table rexretpool_table(config.system_contract, config.system_contract.value);
+   auto                               rexretpool_itr = rexretpool_table.begin();
+   if (rexretpool_itr != rexretpool_table.end()) {
+      rexretpool = *rexretpool_itr;
+   }
+   return rexretpool;
+}
+
+[[eosio::action, eosio::read_only]] eosiosystem::rex_return_pool api::rexretpool()
+{
+   return get_rex_return_pool(get_config());
+}
+
+[[eosio::action, eosio::read_only]] get_rex_apy_response api::rexapy()
+{
+   // NYI: CALCULATION INCORRECT
+   auto       config  = get_config();
+   auto       pool    = get_rex_pool(config);
+   auto       retpool = get_rex_return_pool(config);
+   const auto apy     = (((proceeds + current_rate_of_increase) / 30 * 365) / total_lendable * 100);
+   return {
+      .apy                      = apy,
+      .total_lendable           = total_lendable,
+      .current_rate_of_increase = current_rate_of_increase,
+      .proceeds                 = proceeds,
+   };
+}
+
 [[eosio::action]] void api::setconfig(const name   system_contract,
                                       const name   system_contract_msig,
                                       const name   system_token_contract,

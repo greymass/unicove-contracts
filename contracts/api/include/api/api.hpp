@@ -24,6 +24,14 @@ struct get_account_response
    eosiosystem::voter_info                       vote;
 };
 
+struct get_rex_apy_response
+{
+   double   apy;
+   uint64_t total_lendable;
+   uint64_t current_rate_of_increase;
+   uint64_t proceeds;
+};
+
 struct get_available_response
 {
    name account;
@@ -82,6 +90,9 @@ public:
    [[eosio::action, eosio::read_only]] get_available_response available(const name account);
    using available_action = action_wrapper<"available"_n, &api::available>;
 
+   [[eosio::action, eosio::read_only]] get_rex_apy_response rexapy();
+   using rexapy_action = action_wrapper<"rexapy"_n, &api::rexapy>;
+
    [[eosio::action, eosio::read_only]] std::vector<asset>
    balances(const name account, const std::vector<token_definition> tokens, const bool zerobalances);
    using balances_action = action_wrapper<"balances"_n, &api::balances>;
@@ -122,6 +133,9 @@ public:
    [[eosio::action, eosio::read_only]] eosiosystem::rex_fund rexfund(const name account);
    using rexfund_action = action_wrapper<"rexfund"_n, &api::rexfund>;
 
+   [[eosio::action, eosio::read_only]] eosiosystem::rex_return_pool rexretpool();
+   using rexretpool_action = action_wrapper<"rexretpool"_n, &api::rexretpool>;
+
    [[eosio::action, eosio::read_only]] eosiosystem::voter_info votes(const name account);
    using vote_action = action_wrapper<"votes"_n, &api::votes>;
 
@@ -136,6 +150,7 @@ private:
    eosiosystem::eosio_global_state               get_global(const config_row config);
    eosiosystem::exchange_state                   get_rammarket(const config_row config);
    eosiosystem::rex_pool                         get_rex_pool(const config_row config);
+   eosiosystem::rex_return_pool                  get_rex_return_pool(const config_row config);
    eosiosystem::powerup_state                    get_powerup(const config_row config);
    eosiosystem::refund_request                   get_refund_request(const config_row config, const name account);
    eosiosystem::rex_balance                      get_rex_balance(const config_row config, const name account);
