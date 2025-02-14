@@ -1,0 +1,3 @@
+## Set default configuration
+
+https://unicove.com/en/eos/contract/unicove.gm/actions/setconfig/0000000000ea30550000735802ea305500a6823403ea305504454f53000000000452414d434f52450052414d00000000045245580000000000?readonly=false&triggerOnPageLoad=false
