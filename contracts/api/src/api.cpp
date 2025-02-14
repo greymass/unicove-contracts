@@ -53,6 +53,24 @@ std::vector<eosiosystem::delegated_bandwidth> api::get_delegated_bandwidth(const
    return get_delegated_bandwidth(get_config(), account);
 }
 
+eosiosystem::gifted_ram api::get_gifted_ram(const api::config_row config, const name account)
+{
+   eosiosystem::gifted_ram gr;
+   if (config.gifted_ram_enabled) {
+      eosiosystem::gifted_ram_table gr_table(config.system_contract, config.system_contract.value);
+      auto                          gr_itr = gr_table.find(account.value);
+      if (gr_itr != gr_table.end()) {
+         gr = *gr_itr;
+      }
+   }
+   return gr;
+}
+
+[[eosio::action, eosio::read_only]] eosiosystem::gifted_ram api::giftedram(const name account)
+{
+   return get_gifted_ram(get_config(), account);
+}
+
 std::vector<eosio::multisig::proposal> api::get_msig_proposals(const api::config_row config, const name account)
 {
    std::vector<eosio::multisig::proposal> msig_rows;
@@ -141,6 +159,7 @@ eosiosystem::abi_hash get_contract_hash(const api::config_row config, const name
    auto config       = get_config();
    auto contracthash = get_contract_hash(config, account);
    auto balance      = get_system_token_balance(config, account);
+   auto giftedram    = get_gifted_ram(config, account);
    auto refund       = get_refund_request(config, account);
    auto delegations  = get_delegated_bandwidth(config, account);
    auto proposals    = get_msig_proposals(config, account);
@@ -152,6 +171,7 @@ eosiosystem::abi_hash get_contract_hash(const api::config_row config, const name
                                .balance      = balance,
                                .contracthash = contracthash.hash,
                                .delegations  = delegations,
+                               .giftedram    = giftedram,
                                .proposals    = proposals,
                                .refund       = refund,
                                .rexbal       = rexbal,
@@ -287,7 +307,11 @@ api::balances(const name account, const std::vector<token_definition> tokens, co
 [[eosio::action]] void api::setconfig(const name   system_contract,
                                       const name   system_contract_msig,
                                       const name   system_token_contract,
-                                      const symbol system_token_symbol)
+                                      const symbol system_token_symbol,
+                                      const symbol system_ramcore_symbol,
+                                      const symbol system_ram_symbol,
+                                      const symbol system_rex_symbol,
+                                      const bool   gifted_ram_enabled)
 {
    require_auth(get_self());
    config_table _config(get_self(), get_self().value);
@@ -296,6 +320,10 @@ api::balances(const name account, const std::vector<token_definition> tokens, co
    config.system_contract_msig  = system_contract_msig;
    config.system_token_contract = system_token_contract;
    config.system_token_symbol   = system_token_symbol;
+   config.system_ramcore_symbol = system_ramcore_symbol;
+   config.system_ram_symbol     = system_ram_symbol;
+   config.system_rex_symbol     = system_rex_symbol;
+   config.gifted_ram_enabled    = gifted_ram_enabled;
    _config.set(config, get_self());
 }
 

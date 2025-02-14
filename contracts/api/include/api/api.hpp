@@ -22,6 +22,7 @@ struct get_account_response
    eosiosystem::rex_balance                      rexbal;
    eosiosystem::rex_fund                         rexfund;
    eosiosystem::voter_info                       vote;
+   eosiosystem::gifted_ram                       giftedram;
 };
 
 struct get_available_response
@@ -52,6 +53,7 @@ struct get_network_response
    eosiosystem::exchange_state     ram;
    eosiosystem::rex_pool           rex;
    token_supply                    token;
+   int64_t                         ram_gift_bytes = eosiosystem::ram_gift_bytes;
 };
 
 class [[eosio::contract("api")]] api : public contract
@@ -68,13 +70,18 @@ public:
       symbol system_ramcore_symbol = eosiosystem::system_contract::ramcore_symbol;
       symbol system_ram_symbol     = eosiosystem::system_contract::ram_symbol;
       symbol system_rex_symbol     = eosiosystem::system_contract::rex_symbol;
+      bool   gifted_ram_enabled    = false;
    };
    typedef eosio::singleton<"config"_n, config_row> config_table;
 
    [[eosio::action]] void setconfig(const name   system_contract,
                                     const name   system_contract_msig,
                                     const name   system_token_contract,
-                                    const symbol system_token_symbol);
+                                    const symbol system_token_symbol,
+                                    const symbol system_ramcore_symbol,
+                                    const symbol system_ram_symbol,
+                                    const symbol system_rex_symbol,
+                                    const bool   gifted_ram_enabled);
 
    [[eosio::action, eosio::read_only]] get_account_response account(const name account);
    using account_action = action_wrapper<"account"_n, &api::account>;
@@ -97,6 +104,9 @@ public:
 
    [[eosio::action, eosio::read_only]] eosiosystem::rex_pool rex();
    using rex_action = action_wrapper<"rex"_n, &api::rex>;
+
+   [[eosio::action, eosio::read_only]] eosiosystem::gifted_ram giftedram(const name account);
+   using giftedram_action = action_wrapper<"giftedram"_n, &api::giftedram>;
 
    [[eosio::action, eosio::read_only]] eosiosystem::eosio_global_state global();
    using global_action = action_wrapper<"global"_n, &api::global>;
@@ -133,6 +143,7 @@ public:
 private:
    config_row                                    get_config();
    token_supply                                  get_token_supply(const token_definition def);
+   eosiosystem::gifted_ram                       get_gifted_ram(const api::config_row config, const name account);
    eosiosystem::eosio_global_state               get_global(const config_row config);
    eosiosystem::exchange_state                   get_rammarket(const config_row config);
    eosiosystem::rex_pool                         get_rex_pool(const config_row config);
