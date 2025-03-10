@@ -18,6 +18,15 @@ build/api/debug:
 build/api/production:
 	make -C contracts/api build/production
 
+build/accounts:
+	make -C contracts/accounts build
+
+build/accounts/debug:
+	make -C contracts/accounts build/debug
+
+build/accounts/production:
+	make -C contracts/accounts build/production
+
 build/delphihelper:
 	make -C contracts/delphihelper build
 
