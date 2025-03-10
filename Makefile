@@ -27,14 +27,14 @@ build/delphihelper/debug:
 build/delphihelper/production:
 	make -C contracts/delphihelper build/production
 
-build/token:
-	make -C contracts/token build
+build/tokens:
+	make -C contracts/tokens build
 
-build/token/debug:
-	make -C contracts/token build/debug
+build/tokens/debug:
+	make -C contracts/tokens build/debug
 
-build/token/production:
-	make -C contracts/token build/production
+build/tokens/production:
+	make -C contracts/tokens build/production
 
 # TESTNET
 

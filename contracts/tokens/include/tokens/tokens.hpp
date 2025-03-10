@@ -5,11 +5,13 @@
 
 #include <string>
 
-namespace eosiosystem {
-class system_contract;
-}
+// namespace eosiosystem {
+// class system_contract;
+// }
 
-namespace eosio {
+using namespace eosio;
+
+namespace tokens {
 
 using std::string;
 
@@ -37,7 +39,7 @@ using std::string;
  * scoped to the token symbol.  Therefore, when one queries the `stats` table for a token symbol the result is one
  * single entry/row corresponding to the queried symbol token if it was previously created, or nothing, otherwise.
  */
-class [[eosio::contract("eosio.token")]] token : public contract
+class [[eosio::contract("tokens")]] tokens : public contract
 {
 public:
    using contract::contract;
@@ -149,14 +151,14 @@ public:
       return accountstable.get(sym_code.raw(), "no balance with specified symbol").balance;
    }
 
-   using create_action       = eosio::action_wrapper<"create"_n, &token::create>;
-   using issue_action        = eosio::action_wrapper<"issue"_n, &token::issue>;
-   using retire_action       = eosio::action_wrapper<"retire"_n, &token::retire>;
-   using transfer_action     = eosio::action_wrapper<"transfer"_n, &token::transfer>;
-   using open_action         = eosio::action_wrapper<"open"_n, &token::open>;
-   using close_action        = eosio::action_wrapper<"close"_n, &token::close>;
-   using issuefixed_action   = eosio::action_wrapper<"issuefixed"_n, &token::issuefixed>;
-   using setmaxsupply_action = eosio::action_wrapper<"setmaxsupply"_n, &token::setmaxsupply>;
+   using create_action       = eosio::action_wrapper<"create"_n, &tokens::create>;
+   using issue_action        = eosio::action_wrapper<"issue"_n, &tokens::issue>;
+   using retire_action       = eosio::action_wrapper<"retire"_n, &tokens::retire>;
+   using transfer_action     = eosio::action_wrapper<"transfer"_n, &tokens::transfer>;
+   using open_action         = eosio::action_wrapper<"open"_n, &tokens::open>;
+   using close_action        = eosio::action_wrapper<"close"_n, &tokens::close>;
+   using issuefixed_action   = eosio::action_wrapper<"issuefixed"_n, &tokens::issuefixed>;
+   using setmaxsupply_action = eosio::action_wrapper<"setmaxsupply"_n, &tokens::setmaxsupply>;
 
    struct [[eosio::table]] account
    {
@@ -182,4 +184,4 @@ private:
    void add_balance(const name& owner, const asset& value, const name& ram_payer);
 };
 
-} // namespace eosio
+} // namespace tokens

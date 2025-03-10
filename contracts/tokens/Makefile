@@ -3,11 +3,11 @@ SHELL := /bin/bash
 TEST_FILES := $(shell find src -name '*.ts')
 BIN := ./node_modules/.bin
 
-SRC_CONTRACT_NAME = eosio.token
+SRC_CONTRACT_NAME = tokens
 MAINNET_NODE_URL = https://eos.greymass.com
-MAINNET_CONTRACT_ACCOUNT = token
+MAINNET_CONTRACT_ACCOUNT = tokens
 TESTNET_NODE_URL = https://jungle4.greymass.com
-TESTNET_CONTRACT_ACCOUNT = token
+TESTNET_CONTRACT_ACCOUNT = tokens
 
 build: | build/dir
 	cdt-cpp -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -D DEBUG

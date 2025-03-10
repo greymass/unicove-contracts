@@ -1,8 +1,8 @@
-#include <eosio.token/eosio.token.hpp>
+#include <tokens/tokens.hpp>
 
-namespace eosio {
+namespace tokens {
 
-void token::create(const name& issuer, const asset& maximum_supply)
+void tokens::create(const name& issuer, const asset& maximum_supply)
 {
    require_auth(get_self());
 
@@ -21,7 +21,7 @@ void token::create(const name& issuer, const asset& maximum_supply)
    });
 }
 
-void token::issue(const name& to, const asset& quantity, const string& memo)
+void tokens::issue(const name& to, const asset& quantity, const string& memo)
 {
    auto sym = quantity.symbol;
    check(sym.is_valid(), "invalid symbol name");
@@ -45,7 +45,7 @@ void token::issue(const name& to, const asset& quantity, const string& memo)
    add_balance(st.issuer, quantity, st.issuer);
 }
 
-void token::issuefixed(const name& to, const asset& supply, const string& memo)
+void tokens::issuefixed(const name& to, const asset& supply, const string& memo)
 {
    const asset circulating_supply = get_supply(get_self(), supply.symbol.code());
    check(circulating_supply.symbol == supply.symbol, "symbol precision mismatch");
@@ -53,7 +53,7 @@ void token::issuefixed(const name& to, const asset& supply, const string& memo)
    issue(to, quantity, memo);
 }
 
-void token::setmaxsupply(const name& issuer, const asset& maximum_supply)
+void tokens::setmaxsupply(const name& issuer, const asset& maximum_supply)
 {
    auto sym = maximum_supply.symbol;
    check(maximum_supply.is_valid(), "invalid supply");
@@ -70,7 +70,7 @@ void token::setmaxsupply(const name& issuer, const asset& maximum_supply)
    statstable.modify(st, same_payer, [&](auto& s) { s.max_supply = maximum_supply; });
 }
 
-void token::retire(const asset& quantity, const string& memo)
+void tokens::retire(const asset& quantity, const string& memo)
 {
    auto sym = quantity.symbol;
    check(sym.is_valid(), "invalid symbol name");
@@ -92,7 +92,7 @@ void token::retire(const asset& quantity, const string& memo)
    sub_balance(st.issuer, quantity);
 }
 
-void token::transfer(const name& from, const name& to, const asset& quantity, const string& memo)
+void tokens::transfer(const name& from, const name& to, const asset& quantity, const string& memo)
 {
    check(from != to, "cannot transfer to self");
    require_auth(from);
@@ -115,7 +115,7 @@ void token::transfer(const name& from, const name& to, const asset& quantity, co
    add_balance(to, quantity, payer);
 }
 
-void token::sub_balance(const name& owner, const asset& value)
+void tokens::sub_balance(const name& owner, const asset& value)
 {
    accounts from_acnts(get_self(), owner.value);
 
@@ -125,7 +125,7 @@ void token::sub_balance(const name& owner, const asset& value)
    from_acnts.modify(from, owner, [&](auto& a) { a.balance -= value; });
 }
 
-void token::add_balance(const name& owner, const asset& value, const name& ram_payer)
+void tokens::add_balance(const name& owner, const asset& value, const name& ram_payer)
 {
    accounts to_acnts(get_self(), owner.value);
    auto     to = to_acnts.find(value.symbol.code().raw());
@@ -136,7 +136,7 @@ void token::add_balance(const name& owner, const asset& value, const name& ram_p
    }
 }
 
-void token::open(const name& owner, const symbol& symbol, const name& ram_payer)
+void tokens::open(const name& owner, const symbol& symbol, const name& ram_payer)
 {
    require_auth(ram_payer);
 
@@ -154,7 +154,7 @@ void token::open(const name& owner, const symbol& symbol, const name& ram_payer)
    }
 }
 
-void token::close(const name& owner, const symbol& symbol)
+void tokens::close(const name& owner, const symbol& symbol)
 {
    require_auth(owner);
    accounts acnts(get_self(), owner.value);
@@ -164,4 +164,4 @@ void token::close(const name& owner, const symbol& symbol)
    acnts.erase(it);
 }
 
-} // namespace eosio
+} // namespace tokens
