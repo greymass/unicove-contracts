@@ -1,5 +1,3 @@
-#include <tokens/tokens.hpp>
-
 namespace tokens {
 
 void tokens::create(const name& issuer, const asset& maximum_supply)
