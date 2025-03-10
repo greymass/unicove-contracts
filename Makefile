@@ -18,12 +18,24 @@ build/api/debug:
 build/api/production:
 	make -C contracts/api build/production
 
+build/delphihelper:
+	make -C contracts/delphihelper build
+
+build/delphihelper/debug:
+	make -C contracts/delphihelper build/debug
+
+build/delphihelper/production:
+	make -C contracts/delphihelper build/production
+
 # TESTNET
 
 testnet:
 	make -C contracts/api testnet
 
 # MAINNET
+
+mainnet/delphihelper:
+	make -C contracts/delphihelper mainnet
 
 mainnet:
 	make -C contracts/api mainnet
