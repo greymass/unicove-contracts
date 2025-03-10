@@ -34,6 +34,9 @@ testnet:
 
 # MAINNET
 
+mainnet/api:
+	make -C contracts/api mainnet
+
 mainnet/delphihelper:
 	make -C contracts/delphihelper mainnet
 
