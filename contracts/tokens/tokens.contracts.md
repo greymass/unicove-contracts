@@ -152,3 +152,36 @@ summary: 'Set the tokens contract current configuration'
 icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
 
 ---
+
+<h1 class="contract">cleartable</h1>
+
+---
+
+spec_version: "0.2.0"
+title: 'DEBUG: Clear Table'
+summary: 'DEBUG: Removes all data from a table.'
+icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
+
+---
+
+<h1 class="contract">reset</h1>
+
+---
+
+spec_version: "0.2.0"
+title: 'DEBUG: Reset Contract State'
+summary: 'DEBUG: Resets the contract state to default values.'
+icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
+
+---
+
+<h1 class="contract">wipe</h1>
+
+---
+
+spec_version: "0.2.0"
+title: 'DEBUG: Wipe Contract Data'
+summary: 'DEBUG: Removes all contract state.'
+icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
+
+---

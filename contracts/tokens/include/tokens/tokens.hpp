@@ -192,9 +192,22 @@ public:
    [[eosio::action]] void setconfig(const bool enabled);
    using setconfig_action = eosio::action_wrapper<"setconfig"_n, &tokens::setconfig>;
 
+#ifdef DEBUG
+   [[eosio::action]] void wipe();
+   [[eosio::action]] void reset();
+#endif
+
 private:
    void sub_balance(const name& owner, const asset& value);
    void add_balance(const name& owner, const asset& value, const name& ram_payer);
+
+#ifdef DEBUG
+   template <typename T>
+   void clear_table(T& table, uint64_t rows_to_clear);
+   void reset_singletons();
+   void wipe_singletons();
+   void wipe_tables();
+#endif
 };
 
 } // namespace tokens
