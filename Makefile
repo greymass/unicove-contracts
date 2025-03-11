@@ -41,6 +41,9 @@ build/tokens/production:
 testnet:
 	make -C contracts/api testnet
 
+testnet/tokens:
+	make -C contracts/tokens testnet
+
 # MAINNET
 
 mainnet/api:

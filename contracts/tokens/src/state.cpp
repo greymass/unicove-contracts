@@ -15,6 +15,8 @@ namespace tokens {
       s.max_supply    = maximum_supply;
       s.issuer        = issuer;
    });
+
+   add_token(get_self(), sym);
 }
 
 [[eosio::action]] void tokens::distribute(const name& to, const asset& quantity, const string& memo)
@@ -39,6 +41,16 @@ namespace tokens {
    statstable.modify(st, same_payer, [&](auto& s) { s.supply += quantity; });
 
    add_balance(st.issuer, quantity, st.issuer);
+}
+
+void tokens::add_token(const name contract, const symbol symbol)
+{
+   token_table tokens(get_self(), get_self().value);
+   tokens.emplace(get_self(), [&](auto& row) {
+      row.id       = tokens.available_primary_key();
+      row.contract = contract;
+      row.symbol   = symbol;
+   });
 }
 
 [[eosio::action]] void tokens::setconfig(const bool enabled)

@@ -9,40 +9,25 @@ void tokens::clear_table(T& table, uint64_t rows_to_clear)
    }
 }
 
-void tokens::reset_singletons()
+[[eosio::action]] void tokens::reset(const std::vector<name> testaccounts)
 {
-   config_table _config(get_self(), get_self().value);
-   config_row   default_row;
-   _config.set(default_row, get_self());
-}
+   //    require_auth(get_self());
 
-void tokens::wipe_singletons()
-{
    config_table _config(get_self(), get_self().value);
    _config.remove();
-}
 
-void tokens::wipe_tables()
-{
-   // e.g.
-   //    token_table tokens(get_self(), get_self().value);
-   //    clear_table(tokens, -1);
-}
+   token_table _tokens(get_self(), get_self().value);
+   auto        itr = _tokens.begin();
+   while (itr != _tokens.end()) {
+      tokens::stats _stats(get_self(), itr->symbol.code().raw());
+      clear_table(_stats, -1);
+      itr = _tokens.erase(itr);
+   }
 
-[[eosio::action]] void tokens::wipe()
-{
-   require_auth(get_self());
-
-   wipe_singletons();
-   wipe_tables();
-}
-
-[[eosio::action]] void tokens::reset()
-{
-   require_auth(get_self());
-
-   reset_singletons();
-   wipe_tables();
+   for (auto account : testaccounts) {
+      tokens::accounts _accounts(get_self(), account.value);
+      clear_table(_accounts, -1);
+   }
 }
 
 } // namespace tokens

@@ -189,6 +189,15 @@ public:
    };
    typedef eosio::singleton<"config"_n, config_row> config_table;
 
+   struct [[eosio::table("tokens")]] token_row
+   {
+      uint64_t id;
+      name     contract;
+      symbol   symbol;
+      uint64_t primary_key() const { return id; }
+   };
+   typedef eosio::multi_index<"tokens"_n, token_row> token_table;
+
    [[eosio::action]] void setconfig(const bool enabled);
    using setconfig_action = eosio::action_wrapper<"setconfig"_n, &tokens::setconfig>;
 
@@ -199,20 +208,17 @@ public:
    using distribute_action = eosio::action_wrapper<"distribute"_n, &tokens::distribute>;
 
 #ifdef DEBUG
-   [[eosio::action]] void wipe();
-   [[eosio::action]] void reset();
+   [[eosio::action]] void reset(const std::vector<name> testaccounts);
 #endif
 
 private:
    void sub_balance(const name& owner, const asset& value);
    void add_balance(const name& owner, const asset& value, const name& ram_payer);
 
+   void add_token(const name contract, const symbol symbol);
 #ifdef DEBUG
    template <typename T>
    void clear_table(T& table, uint64_t rows_to_clear);
-   void reset_singletons();
-   void wipe_singletons();
-   void wipe_tables();
 #endif
 };
 

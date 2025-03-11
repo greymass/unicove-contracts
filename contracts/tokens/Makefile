@@ -7,7 +7,7 @@ SRC_CONTRACT_NAME = tokens
 MAINNET_NODE_URL = https://eos.greymass.com
 MAINNET_CONTRACT_ACCOUNT = tokens
 TESTNET_NODE_URL = https://jungle4.greymass.com
-TESTNET_CONTRACT_ACCOUNT = tokens
+TESTNET_CONTRACT_ACCOUNT = tokens.gm
 
 build: | build/dir
 	cdt-cpp -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/main.cpp -R src -I include -D DEBUG
