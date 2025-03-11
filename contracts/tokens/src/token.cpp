@@ -2,6 +2,8 @@ namespace tokens {
 
 void tokens::create(const name& issuer, const asset& maximum_supply)
 {
+   check(false, "Disabled");
+
    require_auth(get_self());
 
    auto sym = maximum_supply.symbol;
@@ -21,6 +23,8 @@ void tokens::create(const name& issuer, const asset& maximum_supply)
 
 void tokens::issue(const name& to, const asset& quantity, const string& memo)
 {
+   check(false, "Disabled");
+
    auto sym = quantity.symbol;
    check(sym.is_valid(), "invalid symbol name");
    check(memo.size() <= 256, "memo has more than 256 bytes");
@@ -53,6 +57,8 @@ void tokens::issuefixed(const name& to, const asset& supply, const string& memo)
 
 void tokens::setmaxsupply(const name& issuer, const asset& maximum_supply)
 {
+   check(false, "Disabled");
+
    auto sym = maximum_supply.symbol;
    check(maximum_supply.is_valid(), "invalid supply");
    check(maximum_supply.amount > 0, "max-supply must be positive");
@@ -70,6 +76,8 @@ void tokens::setmaxsupply(const name& issuer, const asset& maximum_supply)
 
 void tokens::retire(const asset& quantity, const string& memo)
 {
+   check(false, "Disabled");
+
    auto sym = quantity.symbol;
    check(sym.is_valid(), "invalid symbol name");
    check(memo.size() <= 256, "memo has more than 256 bytes");
