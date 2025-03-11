@@ -2,6 +2,7 @@
 
 #include <eosio/asset.hpp>
 #include <eosio/eosio.hpp>
+#include <eosio/singleton.hpp>
 
 #include <string>
 
@@ -178,6 +179,18 @@ public:
 
    typedef eosio::multi_index<"accounts"_n, account>    accounts;
    typedef eosio::multi_index<"stat"_n, currency_stats> stats;
+
+   /**
+    * From here on the contract is extended with non-standard actions/tables
+    */
+   struct [[eosio::table("config")]] config_row
+   {
+      bool enabled = true;
+   };
+   typedef eosio::singleton<"config"_n, config_row> config_table;
+
+   [[eosio::action]] void setconfig(const bool enabled);
+   using setconfig_action = eosio::action_wrapper<"setconfig"_n, &tokens::setconfig>;
 
 private:
    void sub_balance(const name& owner, const asset& value);
