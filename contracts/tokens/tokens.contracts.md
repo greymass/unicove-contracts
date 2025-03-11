@@ -142,6 +142,28 @@ If {{from}} is not already the RAM payer of their {{asset_to_symbol_code quantit
 
 If {{to}} does not have a balance for {{asset_to_symbol_code quantity}}, {{from}} will be designated as the RAM payer of the {{asset_to_symbol_code quantity}} token balance for {{to}}. As a result, RAM will be deducted from {{from}}’s resources to create the necessary records.
 
+<h1 class="contract">regtoken</h1>
+
+---
+
+spec_version: "0.2.0"
+title: Register Token
+summary: 'Register a new token'
+icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
+
+---
+
+<h1 class="contract">distribute</h1>
+
+---
+
+spec_version: "0.2.0"
+title: Distribute Token
+summary: 'Distribute newly minted tokens'
+icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
+
+---
+
 <h1 class="contract">setconfig</h1>
 
 ---

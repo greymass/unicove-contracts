@@ -192,6 +192,12 @@ public:
    [[eosio::action]] void setconfig(const bool enabled);
    using setconfig_action = eosio::action_wrapper<"setconfig"_n, &tokens::setconfig>;
 
+   [[eosio::action]] void regtoken(const name& issuer, const asset& maximum_supply);
+   using regtoken_action = eosio::action_wrapper<"regtoken"_n, &tokens::regtoken>;
+
+   [[eosio::action]] void distribute(const name& to, const asset& quantity, const string& memo);
+   using distribute_action = eosio::action_wrapper<"distribute"_n, &tokens::distribute>;
+
 #ifdef DEBUG
    [[eosio::action]] void wipe();
    [[eosio::action]] void reset();
