@@ -2,31 +2,27 @@
 
 #include <eosio/asset.hpp>
 #include <eosio/eosio.hpp>
-#include <eosio/singleton.hpp>
 
 #include <string>
 
-// namespace eosiosystem {
-// class system_contract;
-// }
+namespace eosiosystem {
+class system_contract;
+}
 
-using namespace eosio;
-
-namespace tokens {
+namespace eosio {
 
 using std::string;
 
 /**
  * The `eosio.token` sample system contract defines the structures and actions that allow users to create, issue, and
  * manage tokens for EOSIO based blockchains. It demonstrates one way to implement a smart contract which allows for
- * creation and management of tokens. It is possible for one to create a similar contract which suits different
- * needs. However, it is recommended that if one only needs a token with the below listed actions, that one uses the
+ * creation and management of tokens. It is possible for one to create a similar contract which suits different needs.
+ * However, it is recommended that if one only needs a token with the below listed actions, that one uses the
  * `eosio.token` contract instead of developing their own.
  *
  * The `eosio.token` contract class also implements two useful public static methods: `get_supply` and `get_balance`.
- * The first allows one to check the total supply of a specified token, created by an account and the second allows
- * one to check the balance of a token for a specified account (the token creator account has to be specified as
- * well).
+ * The first allows one to check the total supply of a specified token, created by an account and the second allows one
+ * to check the balance of a token for a specified account (the token creator account has to be specified as well).
  *
  * The `eosio.token` contract manages the set of tokens, accounts and their corresponding balances, by using two
  * internal multi-index structures: the `accounts` and `stats`. The `accounts` multi-index table holds, for each row,
@@ -40,7 +36,7 @@ using std::string;
  * scoped to the token symbol.  Therefore, when one queries the `stats` table for a token symbol the result is one
  * single entry/row corresponding to the queried symbol token if it was previously created, or nothing, otherwise.
  */
-class [[eosio::contract("tokens")]] tokens : public contract
+class [[eosio::contract("eosio.token")]] token : public contract
 {
 public:
    using contract::contract;
@@ -152,14 +148,14 @@ public:
       return accountstable.get(sym_code.raw(), "no balance with specified symbol").balance;
    }
 
-   using create_action       = eosio::action_wrapper<"create"_n, &tokens::create>;
-   using issue_action        = eosio::action_wrapper<"issue"_n, &tokens::issue>;
-   using retire_action       = eosio::action_wrapper<"retire"_n, &tokens::retire>;
-   using transfer_action     = eosio::action_wrapper<"transfer"_n, &tokens::transfer>;
-   using open_action         = eosio::action_wrapper<"open"_n, &tokens::open>;
-   using close_action        = eosio::action_wrapper<"close"_n, &tokens::close>;
-   using issuefixed_action   = eosio::action_wrapper<"issuefixed"_n, &tokens::issuefixed>;
-   using setmaxsupply_action = eosio::action_wrapper<"setmaxsupply"_n, &tokens::setmaxsupply>;
+   using create_action       = eosio::action_wrapper<"create"_n, &token::create>;
+   using issue_action        = eosio::action_wrapper<"issue"_n, &token::issue>;
+   using retire_action       = eosio::action_wrapper<"retire"_n, &token::retire>;
+   using transfer_action     = eosio::action_wrapper<"transfer"_n, &token::transfer>;
+   using open_action         = eosio::action_wrapper<"open"_n, &token::open>;
+   using close_action        = eosio::action_wrapper<"close"_n, &token::close>;
+   using issuefixed_action   = eosio::action_wrapper<"issuefixed"_n, &token::issuefixed>;
+   using setmaxsupply_action = eosio::action_wrapper<"setmaxsupply"_n, &token::setmaxsupply>;
 
    struct [[eosio::table]] account
    {
@@ -180,70 +176,9 @@ public:
    typedef eosio::multi_index<"accounts"_n, account>    accounts;
    typedef eosio::multi_index<"stat"_n, currency_stats> stats;
 
-   /**
-    * From here on the contract is extended with non-standard actions/tables
-    */
-   struct token_definition
-   {
-      name   contract;
-      symbol symbol;
-   };
-
-   struct distribution
-   {
-      name  receiver;
-      asset quantity;
-   };
-
-   static constexpr symbol default_system_token_symbol  = symbol("EOS", 4);
-   static constexpr name   default_system_token_account = "eosio.token"_n;
-
-   struct [[eosio::table("config")]] config_row
-   {
-      bool             enabled      = true;
-      asset            price        = asset(0, symbol("EOS", 4));
-      token_definition system_token = {.contract = "eosio.token"_n, .symbol = symbol("EOS", 4)};
-      name             fees_account = "eosio"_n;
-   };
-   typedef eosio::singleton<"config"_n, config_row> config_table;
-
-   struct [[eosio::table("tokens")]] token_row
-   {
-      uint64_t id;
-      name     contract;
-      symbol   symbol;
-      uint64_t primary_key() const { return id; }
-   };
-   typedef eosio::multi_index<"tokens"_n, token_row> token_table;
-
-   [[eosio::action]] void
-   setconfig(const bool enabled, const asset price, const token_definition system_token, const name fees_account);
-   using setconfig_action = eosio::action_wrapper<"setconfig"_n, &tokens::setconfig>;
-
-   [[eosio::action]] void regtoken(const name&                      issuer,
-                                   const asset&                     maximum_supply,
-                                   const std::vector<distribution>& distribution,
-                                   const asset&                     payment);
-   using regtoken_action = eosio::action_wrapper<"regtoken"_n, &tokens::regtoken>;
-
-   [[eosio::action]] void logdistribute(const name& issuer, const name& receiver, const asset& quantity);
-   using logdistribute_action = eosio::action_wrapper<"logdistribute"_n, &tokens::logdistribute>;
-
-#ifdef DEBUG
-   [[eosio::action]] void reset(const std::vector<name> testaccounts);
-#endif
-
 private:
    void sub_balance(const name& owner, const asset& value);
    void add_balance(const name& owner, const asset& value, const name& ram_payer);
-
-   config_row get_config();
-   void       add_token(const name issuer, const name contract, const symbol symbol);
-   void       distribute(const name& to, const asset& quantity);
-#ifdef DEBUG
-   template <typename T>
-   void clear_table(T& table, uint64_t rows_to_clear);
-#endif
 };
 
-} // namespace tokens
+} // namespace eosio

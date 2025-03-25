@@ -16,7 +16,7 @@ build/debug: | build/dir
 	cdt-cpp -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/main.cpp -R src -I include -D DEBUG
 
 build/production: | build/dir
-	cdt-cpp -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/main.cpp -R src -I include
+	cdt-cpp -0s -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/main.cpp -R src -I include
 
 build/dir:
 	mkdir -p build
