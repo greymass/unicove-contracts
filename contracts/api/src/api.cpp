@@ -35,12 +35,11 @@ eosiosystem::refund_request api::get_refund_request(const api::config_row config
    return get_refund_request(get_config(), account);
 }
 
-std::vector<eosiosystem::delegated_bandwidth> api::get_delegated_bandwidth(const api::config_row config,
-                                                                           const name            account)
+vector<eosiosystem::delegated_bandwidth> api::get_delegated_bandwidth(const api::config_row config, const name account)
 {
-   std::vector<eosiosystem::delegated_bandwidth> dbw_rows;
-   eosiosystem::del_bandwidth_table              dbw_table(config.system_contract, account.value);
-   auto                                          dbw_itr = dbw_table.begin();
+   vector<eosiosystem::delegated_bandwidth> dbw_rows;
+   eosiosystem::del_bandwidth_table         dbw_table(config.system_contract, account.value);
+   auto                                     dbw_itr = dbw_table.begin();
    while (dbw_itr != dbw_table.end()) {
       dbw_rows.push_back(*dbw_itr);
       dbw_itr++;
@@ -48,7 +47,7 @@ std::vector<eosiosystem::delegated_bandwidth> api::get_delegated_bandwidth(const
    return dbw_rows;
 }
 
-[[eosio::action, eosio::read_only]] std::vector<eosiosystem::delegated_bandwidth> api::delegations(const name account)
+[[eosio::action, eosio::read_only]] vector<eosiosystem::delegated_bandwidth> api::delegations(const name account)
 {
    return get_delegated_bandwidth(get_config(), account);
 }
@@ -73,9 +72,9 @@ eosiosystem::gifted_ram api::get_gifted_ram(const api::config_row config, const 
 
 std::vector<eosio::multisig::proposal> api::get_msig_proposals(const api::config_row config, const name account)
 {
-   std::vector<eosio::multisig::proposal> msig_rows;
-   eosio::multisig::proposals             msig_table(config.system_contract_msig, account.value);
-   auto                                   msig_itr = msig_table.begin();
+   vector<eosio::multisig::proposal> msig_rows;
+   eosio::multisig::proposals        msig_table(config.system_contract_msig, account.value);
+   auto                              msig_itr = msig_table.begin();
    while (msig_itr != msig_table.end()) {
       msig_rows.push_back(*msig_itr);
       msig_itr++;
@@ -83,7 +82,7 @@ std::vector<eosio::multisig::proposal> api::get_msig_proposals(const api::config
    return msig_rows;
 }
 
-[[eosio::action, eosio::read_only]] std::vector<eosio::multisig::proposal> api::proposals(const name account)
+[[eosio::action, eosio::read_only]] vector<eosio::multisig::proposal> api::proposals(const name account)
 {
    return get_msig_proposals(get_config(), account);
 }
@@ -279,10 +278,10 @@ token_supply api::get_token_supply(const token_definition def)
    return get_token_supply(definition);
 }
 
-[[eosio::action, eosio::read_only]] std::vector<asset>
-api::balances(const name account, const std::vector<token_definition> tokens, const bool zerobalances = true)
+[[eosio::action, eosio::read_only]] vector<asset>
+api::balances(const name account, const vector<token_definition> tokens, const bool zerobalances = true)
 {
-   std::vector<asset> balances;
+   vector<asset> balances;
    check(tokens.size() > 0, "tokens must not be empty");
 
    for (const auto& token : tokens) {

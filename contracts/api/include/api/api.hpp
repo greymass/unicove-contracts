@@ -13,16 +13,16 @@ namespace api {
 
 struct get_account_response
 {
-   name                                          account;
-   checksum256                                   contracthash;
-   asset                                         balance;
-   std::vector<eosiosystem::delegated_bandwidth> delegations;
-   std::vector<eosio::multisig::proposal>        proposals;
-   eosiosystem::refund_request                   refund;
-   eosiosystem::rex_balance                      rexbal;
-   eosiosystem::rex_fund                         rexfund;
-   eosiosystem::voter_info                       vote;
-   eosiosystem::gifted_ram                       giftedram;
+   name                                     account;
+   checksum256                              contracthash;
+   asset                                    balance;
+   vector<eosiosystem::delegated_bandwidth> delegations;
+   vector<eosio::multisig::proposal>        proposals;
+   eosiosystem::refund_request              refund;
+   eosiosystem::rex_balance                 rexbal;
+   eosiosystem::rex_fund                    rexfund;
+   eosiosystem::voter_info                  vote;
+   eosiosystem::gifted_ram                  giftedram;
 };
 
 struct get_available_response
@@ -89,8 +89,8 @@ public:
    [[eosio::action, eosio::read_only]] get_available_response available(const name account);
    using available_action = action_wrapper<"available"_n, &api::available>;
 
-   [[eosio::action, eosio::read_only]] std::vector<asset>
-   balances(const name account, const std::vector<token_definition> tokens, const bool zerobalances);
+   [[eosio::action, eosio::read_only]] vector<asset>
+   balances(const name account, const vector<token_definition> tokens, const bool zerobalances);
    using balances_action = action_wrapper<"balances"_n, &api::balances>;
 
    [[eosio::action, eosio::read_only]] eosiosystem::abi_hash contracthash(const name account);
@@ -120,10 +120,10 @@ public:
    [[eosio::action, eosio::read_only]] eosiosystem::refund_request refund(const name account);
    using refund_action = action_wrapper<"refund"_n, &api::refund>;
 
-   [[eosio::action, eosio::read_only]] std::vector<eosiosystem::delegated_bandwidth> delegations(const name account);
+   [[eosio::action, eosio::read_only]] vector<eosiosystem::delegated_bandwidth> delegations(const name account);
    using delegated_action = action_wrapper<"delegations"_n, &api::delegations>;
 
-   [[eosio::action, eosio::read_only]] std::vector<eosio::multisig::proposal> proposals(const name account);
+   [[eosio::action, eosio::read_only]] vector<eosio::multisig::proposal> proposals(const name account);
    using proposals_action = action_wrapper<"proposals"_n, &api::proposals>;
 
    [[eosio::action, eosio::read_only]] eosiosystem::rex_balance rexbal(const name account);
@@ -141,20 +141,20 @@ public:
 #endif
 
 private:
-   config_row                                    get_config();
-   token_supply                                  get_token_supply(const token_definition def);
-   eosiosystem::gifted_ram                       get_gifted_ram(const api::config_row config, const name account);
-   eosiosystem::eosio_global_state               get_global(const config_row config);
-   eosiosystem::exchange_state                   get_rammarket(const config_row config);
-   eosiosystem::rex_pool                         get_rex_pool(const config_row config);
-   eosiosystem::powerup_state                    get_powerup(const config_row config);
-   eosiosystem::refund_request                   get_refund_request(const config_row config, const name account);
-   eosiosystem::rex_balance                      get_rex_balance(const config_row config, const name account);
-   eosiosystem::rex_fund                         get_rex_fund(const config_row config, const name account);
-   eosiosystem::voter_info                       get_voter_info(const config_row config, const name account);
-   std::vector<eosiosystem::delegated_bandwidth> get_delegated_bandwidth(const config_row config, const name account);
-   std::vector<eosio::multisig::proposal>        get_msig_proposals(const config_row config, const name account);
-   asset                                         get_system_token_balance(const config_row config, const name account);
+   config_row                               get_config();
+   token_supply                             get_token_supply(const token_definition def);
+   eosiosystem::gifted_ram                  get_gifted_ram(const api::config_row config, const name account);
+   eosiosystem::eosio_global_state          get_global(const config_row config);
+   eosiosystem::exchange_state              get_rammarket(const config_row config);
+   eosiosystem::rex_pool                    get_rex_pool(const config_row config);
+   eosiosystem::powerup_state               get_powerup(const config_row config);
+   eosiosystem::refund_request              get_refund_request(const config_row config, const name account);
+   eosiosystem::rex_balance                 get_rex_balance(const config_row config, const name account);
+   eosiosystem::rex_fund                    get_rex_fund(const config_row config, const name account);
+   eosiosystem::voter_info                  get_voter_info(const config_row config, const name account);
+   vector<eosiosystem::delegated_bandwidth> get_delegated_bandwidth(const config_row config, const name account);
+   vector<eosio::multisig::proposal>        get_msig_proposals(const config_row config, const name account);
+   asset                                    get_system_token_balance(const config_row config, const name account);
 
 #ifdef DEBUG
    template <typename T>
