@@ -25,7 +25,10 @@ eosiosystem::refund_request api::get_refund_request(const api::config_row config
    eosiosystem::refunds_table  refunds_table(config.system_contract, account.value);
    auto                        refund_itr = refunds_table.find(account.value);
    if (refund_itr != refunds_table.end()) {
-      refund = *refund_itr;
+      // Balances should use the system token regardless of what the table responds with
+      refund            = *refund_itr;
+      refund.cpu_amount = asset(refund_itr->cpu_amount.amount, config.system_token_symbol);
+      refund.net_amount = asset(refund_itr->net_amount.amount, config.system_token_symbol);
    }
    return refund;
 }
@@ -41,7 +44,11 @@ vector<eosiosystem::delegated_bandwidth> api::get_delegated_bandwidth(const api:
    eosiosystem::del_bandwidth_table         dbw_table(config.system_contract, account.value);
    auto                                     dbw_itr = dbw_table.begin();
    while (dbw_itr != dbw_table.end()) {
-      dbw_rows.push_back(*dbw_itr);
+      // Balances should use the system token regardless of what the table responds with
+      eosiosystem::delegated_bandwidth updated = *dbw_itr;
+      updated.cpu_weight                       = asset(dbw_itr->cpu_weight.amount, config.system_token_symbol);
+      updated.net_weight                       = asset(dbw_itr->net_weight.amount, config.system_token_symbol);
+      dbw_rows.push_back(updated);
       dbw_itr++;
    }
    return dbw_rows;
@@ -70,7 +77,7 @@ eosiosystem::gifted_ram api::get_gifted_ram(const api::config_row config, const 
    return get_gifted_ram(get_config(), account);
 }
 
-std::vector<eosio::multisig::proposal> api::get_msig_proposals(const api::config_row config, const name account)
+vector<eosio::multisig::proposal> api::get_msig_proposals(const api::config_row config, const name account)
 {
    vector<eosio::multisig::proposal> msig_rows;
    eosio::multisig::proposals        msig_table(config.system_contract_msig, account.value);
@@ -95,6 +102,8 @@ eosiosystem::rex_balance api::get_rex_balance(const api::config_row config, cons
       auto                           rex_itr = rexbal_table.find(account.value);
       if (rex_itr != rexbal_table.end()) {
          rexbal = *rex_itr;
+         // Balances should use the system token regardless of what the table responds with
+         rexbal.vote_stake = asset(rex_itr->vote_stake.amount, config.system_token_symbol);
       }
    }
    return rexbal;
@@ -113,6 +122,8 @@ eosiosystem::rex_fund api::get_rex_fund(const api::config_row config, const name
       auto                        rexfund_itr = rexfund_table.find(account.value);
       if (rexfund_itr != rexfund_table.end()) {
          rexfund = *rexfund_itr;
+         // Balances should use the system token regardless of what the table responds with
+         rexfund.balance = asset(rexfund_itr->balance.amount, config.system_token_symbol);
       }
    }
    return rexfund;
@@ -206,6 +217,8 @@ eosiosystem::exchange_state api::get_rammarket(const api::config_row config)
    auto                        rammarket_itr = rammarket_table.find(config.system_ramcore_symbol.raw());
    if (rammarket_itr != rammarket_table.end()) {
       ram = *rammarket_itr;
+      // Balances should use the system token regardless of what the table responds with
+      ram.quote.balance = asset(rammarket_itr->quote.balance.amount, config.system_token_symbol);
    }
    return ram;
 }
@@ -219,6 +232,12 @@ eosiosystem::rex_pool api::get_rex_pool(const api::config_row config)
    auto                        rex_itr = rex_table.begin();
    if (rex_itr != rex_table.end()) {
       rex = *rex_itr;
+      // Balances should use the system token regardless of what the table responds with
+      rex.total_lent       = asset(rex_itr->total_lent.amount, config.system_token_symbol);
+      rex.total_unlent     = asset(rex_itr->total_unlent.amount, config.system_token_symbol);
+      rex.total_rent       = asset(rex_itr->total_rent.amount, config.system_token_symbol);
+      rex.total_lendable   = asset(rex_itr->total_lendable.amount, config.system_token_symbol);
+      rex.namebid_proceeds = asset(rex_itr->namebid_proceeds.amount, config.system_token_symbol);
    }
    return rex;
 }
@@ -229,6 +248,12 @@ eosiosystem::powerup_state api::get_powerup(const api::config_row config)
 {
    eosiosystem::powerup_state_singleton powerup_table(config.system_contract, 0);
    auto                                 powerup = powerup_table.get_or_default();
+   // Balances should use the system token regardless of what the table responds with
+   powerup.cpu.min_price   = asset(powerup.cpu.min_price.amount, config.system_token_symbol);
+   powerup.cpu.max_price   = asset(powerup.cpu.max_price.amount, config.system_token_symbol);
+   powerup.net.min_price   = asset(powerup.net.min_price.amount, config.system_token_symbol);
+   powerup.net.max_price   = asset(powerup.net.max_price.amount, config.system_token_symbol);
+   powerup.min_powerup_fee = asset(powerup.min_powerup_fee.amount, config.system_token_symbol);
    return powerup;
 }
 
