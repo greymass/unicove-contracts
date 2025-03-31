@@ -3,8 +3,6 @@
 #include <eosio.msig/eosio.msig.hpp>
 #include <eosio.system/eosio.system.hpp>
 #include <eosio.token/eosio.token.hpp>
-#include <eosio/contract.hpp>
-#include <eosio/singleton.hpp>
 
 using namespace eosio;
 using namespace std;
