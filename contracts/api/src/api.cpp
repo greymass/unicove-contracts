@@ -151,7 +151,8 @@ eosiosystem::abi_hash get_contract_hash(const api::config_row config, const name
    return result;
 }
 
-[[eosio::action, eosio::read_only]] get_account_response api::account(const name account)
+[[eosio::action, eosio::read_only]] get_account_response
+api::account(const name account, const optional<vector<token_definition>> tokens, const optional<bool> zerobalances)
 {
    check(is_account(account), "account does not exist");
 
@@ -166,8 +167,14 @@ eosiosystem::abi_hash get_contract_hash(const api::config_row config, const name
    auto rexfund      = get_rex_fund(config, account);
    auto vote         = get_voter_info(config, account);
 
+   vector<asset> balances;
+   if (tokens.has_value() && !tokens->empty()) {
+      balances = api::balances(account, tokens.value(), zerobalances.value_or(true));
+   }
+
    return get_account_response{.account      = account,
                                .balance      = balance,
+                               .balances     = balances,
                                .contracthash = contracthash.hash,
                                .delegations  = delegations,
                                .giftedram    = giftedram,

@@ -14,6 +14,7 @@ struct get_account_response
    name                                     account;
    checksum256                              contracthash;
    asset                                    balance;
+   vector<asset>                            balances;
    vector<eosiosystem::delegated_bandwidth> delegations;
    vector<eosio::multisig::proposal>        proposals;
    eosiosystem::refund_request              refund;
@@ -81,7 +82,8 @@ public:
                                     const symbol system_rex_symbol,
                                     const bool   gifted_ram_enabled);
 
-   [[eosio::action, eosio::read_only]] get_account_response account(const name account);
+   [[eosio::action, eosio::read_only]] get_account_response
+   account(const name account, const optional<vector<token_definition>> tokens, const optional<bool> zerobalances);
    using account_action = action_wrapper<"account"_n, &api::account>;
 
    [[eosio::action, eosio::read_only]] get_available_response available(const name account);
