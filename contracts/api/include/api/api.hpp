@@ -14,7 +14,6 @@ struct get_account_response
    name                                     account;
    checksum256                              contracthash;
    asset                                    balance;
-   vector<asset>                            balances;
    vector<eosiosystem::delegated_bandwidth> delegations;
    vector<eosio::multisig::proposal>        proposals;
    eosiosystem::refund_request              refund;
@@ -22,6 +21,7 @@ struct get_account_response
    eosiosystem::rex_fund                    rexfund;
    eosiosystem::voter_info                  vote;
    eosiosystem::gifted_ram                  giftedram;
+   vector<asset>                            balances;
 };
 
 struct get_available_response
