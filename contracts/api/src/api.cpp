@@ -8,11 +8,18 @@ api::config_row api::get_config()
    return _config.get_or_default();
 }
 
-token api::get_system_token(const config_row config) { return {.id = get_system_token_definition(config)}; }
+token api::get_system_token(const config_row config, const bool distribution = false)
+{
+   token system_token = {.id = get_system_token_definition(config)};
+   if (distribution) {
+      system_token.distribution = get_token_distribution(system_token.id);
+   }
+   return system_token;
+}
 
 token_definition api::get_system_token_definition(const config_row config)
 {
-   return {.contract = config.system_token_contract, .symbol = config.system_token_symbol};
+   return {.chain = config.chain_id, .contract = config.system_token_contract, .symbol = config.system_token_symbol};
 }
 
 token_balance api::get_system_token_balance(const api::config_row config, const name account)
@@ -281,7 +288,7 @@ eosiosystem::powerup_state api::get_powerup(const api::config_row config)
                                .ram     = get_rammarket(config),
                                .rex     = get_rex_pool(config),
                                .powerup = get_powerup(config),
-                               .token   = get_system_token(config)};
+                               .token   = get_system_token(config, true)};
 }
 
 token_distribution api::get_token_distribution(const token_definition def)

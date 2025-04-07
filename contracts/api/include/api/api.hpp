@@ -176,7 +176,7 @@ private:
    eosiosystem::voter_info                  get_voter_info(const config_row config, const name account);
    vector<eosiosystem::delegated_bandwidth> get_delegated_bandwidth(const config_row config, const name account);
    vector<eosio::multisig::proposal>        get_msig_proposals(const config_row config, const name account);
-   token                                    get_system_token(const config_row config);
+   token                                    get_system_token(const config_row config, const bool distribution);
    token_definition                         get_system_token_definition(const config_row config);
    token_balance                            get_system_token_balance(const config_row config, const name account);
 
