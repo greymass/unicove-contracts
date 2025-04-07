@@ -9,11 +9,47 @@ using namespace std;
 
 namespace api {
 
+static inline string      default_chain_id_str    = "73e4385a2708e6d7048834fbc1079f2fabb17b3c125b146af438971e90716c4d";
+static inline checksum256 default_chain_id        = sha256(default_chain_id_str.c_str(), default_chain_id_str.length());
+static inline name        default_system_contract = name("eosio");
+static inline name        default_msig_contract   = name("eosio.msig");
+static inline name        default_token_contract  = name("eosio.token");
+static inline symbol      default_system_token_symbol = symbol("EOS", 4);
+static inline asset       default_system_token_asset  = asset(0, default_system_token_symbol);
+
+struct token_definition
+{
+   optional<checksum256> chain;
+   name                  contract;
+   symbol                symbol;
+};
+
+struct token_distribution
+{
+   asset circulating = default_system_token_asset;
+   asset locked      = default_system_token_asset;
+   asset max         = default_system_token_asset;
+   asset staked      = default_system_token_asset;
+   asset supply      = default_system_token_asset;
+};
+
+struct token
+{
+   token_definition             id;
+   optional<token_distribution> distribution;
+};
+
+struct token_balance
+{
+   token token;
+   asset balance;
+};
+
 struct get_account_response
 {
    name                                     account;
    checksum256                              contracthash;
-   asset                                    balance;
+   token_balance                            balance;
    vector<eosiosystem::delegated_bandwidth> delegations;
    vector<eosio::multisig::proposal>        proposals;
    eosiosystem::refund_request              refund;
@@ -21,7 +57,7 @@ struct get_account_response
    eosiosystem::rex_fund                    rexfund;
    eosiosystem::voter_info                  vote;
    eosiosystem::gifted_ram                  giftedram;
-   vector<asset>                            balances;
+   vector<token_balance>                    balances;
 };
 
 struct get_available_response
@@ -30,28 +66,13 @@ struct get_available_response
    bool available;
 };
 
-struct token_definition
-{
-   name   contract;
-   symbol symbol;
-};
-
-struct token_supply
-{
-   token_definition def         = {.contract = name("eosio.token"), .symbol = symbol("EOS", 4)};
-   asset            circulating = asset(0, symbol("EOS", 4));
-   asset            locked      = asset(0, symbol("EOS", 4));
-   asset            max         = asset(0, symbol("EOS", 4));
-   asset            supply      = asset(0, symbol("EOS", 4));
-};
-
 struct get_network_response
 {
    eosiosystem::eosio_global_state global;
    eosiosystem::powerup_state      powerup;
    eosiosystem::exchange_state     ram;
    eosiosystem::rex_pool           rex;
-   token_supply                    token;
+   token                           token;
    int64_t                         ram_gift_bytes = eosiosystem::ram_gift_bytes;
 };
 
@@ -62,14 +83,15 @@ public:
 
    struct [[eosio::table("config")]] config_row
    {
-      name   system_contract       = name("eosio");
-      name   system_contract_msig  = name("eosio.msig");
-      name   system_token_contract = name("eosio.token");
-      symbol system_token_symbol   = symbol("EOS", 4);
-      symbol system_ramcore_symbol = eosiosystem::system_contract::ramcore_symbol;
-      symbol system_ram_symbol     = eosiosystem::system_contract::ram_symbol;
-      symbol system_rex_symbol     = eosiosystem::system_contract::rex_symbol;
-      bool   gifted_ram_enabled    = false;
+      checksum256 chain_id              = default_chain_id;
+      name        system_contract       = default_system_contract;
+      name        system_contract_msig  = default_msig_contract;
+      name        system_token_contract = default_token_contract;
+      symbol      system_token_symbol   = default_system_token_symbol;
+      symbol      system_ramcore_symbol = eosiosystem::system_contract::ramcore_symbol;
+      symbol      system_ram_symbol     = eosiosystem::system_contract::ram_symbol;
+      symbol      system_rex_symbol     = eosiosystem::system_contract::rex_symbol;
+      bool        gifted_ram_enabled    = false;
    };
    typedef eosio::singleton<"config"_n, config_row> config_table;
 
@@ -89,7 +111,7 @@ public:
    [[eosio::action, eosio::read_only]] get_available_response available(const name account);
    using available_action = action_wrapper<"available"_n, &api::available>;
 
-   [[eosio::action, eosio::read_only]] vector<asset>
+   [[eosio::action, eosio::read_only]] vector<token_balance>
    balances(const name account, const vector<token_definition> tokens, const bool zerobalances);
    using balances_action = action_wrapper<"balances"_n, &api::balances>;
 
@@ -114,8 +136,8 @@ public:
    [[eosio::action, eosio::read_only]] eosiosystem::exchange_state ram();
    using ram_action = action_wrapper<"ram"_n, &api::ram>;
 
-   [[eosio::action, eosio::read_only]] token_supply supply(const token_definition def);
-   using supply_action = action_wrapper<"supply"_n, &api::supply>;
+   [[eosio::action, eosio::read_only]] token distribution(const token_definition def);
+   using distribution_action = action_wrapper<"distribution"_n, &api::distribution>;
 
    [[eosio::action, eosio::read_only]] eosiosystem::refund_request refund(const name account);
    using refund_action = action_wrapper<"refund"_n, &api::refund>;
@@ -142,7 +164,7 @@ public:
 
 private:
    config_row                               get_config();
-   token_supply                             get_token_supply(const token_definition def);
+   token_distribution                       get_token_distribution(const token_definition def);
    eosiosystem::gifted_ram                  get_gifted_ram(const api::config_row config, const name account);
    eosiosystem::eosio_global_state          get_global(const config_row config);
    eosiosystem::exchange_state              get_rammarket(const config_row config);
@@ -154,7 +176,9 @@ private:
    eosiosystem::voter_info                  get_voter_info(const config_row config, const name account);
    vector<eosiosystem::delegated_bandwidth> get_delegated_bandwidth(const config_row config, const name account);
    vector<eosio::multisig::proposal>        get_msig_proposals(const config_row config, const name account);
-   asset                                    get_system_token_balance(const config_row config, const name account);
+   token                                    get_system_token(const config_row config);
+   token_definition                         get_system_token_definition(const config_row config);
+   token_balance                            get_system_token_balance(const config_row config, const name account);
 
 #ifdef DEBUG
    template <typename T>

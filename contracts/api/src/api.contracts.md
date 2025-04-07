@@ -174,13 +174,13 @@ icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f
 
 ---
 
-<h1 class="contract">supply</h1>
+<h1 class="contract">distribution</h1>
 
 ---
 
 spec_version: "0.2.0"
-title: 'Load Token Supply'
-summary: 'Read-only action to load the supply information of a token.'
+title: 'Load Token Distribution'
+summary: 'Read-only action to load the current distribution information of a token.'
 icon: https://avatars.githubusercontent.com/u/147292861?s=400&u=3b1af66e90dd851f4d7c096ed6a2fbb4b9e190da
 
 ---
