@@ -9,11 +9,10 @@ using namespace std;
 
 namespace api {
 
-static inline string      default_chain_id_str    = "73e4385a2708e6d7048834fbc1079f2fabb17b3c125b146af438971e90716c4d";
-static inline checksum256 default_chain_id        = sha256(default_chain_id_str.c_str(), default_chain_id_str.length());
-static inline name        default_system_contract = name("eosio");
-static inline name        default_msig_contract   = name("eosio.msig");
-static inline name        default_token_contract  = name("eosio.token");
+static inline checksum256 default_chain_id            = checksum256();
+static inline name        default_system_contract     = name("eosio");
+static inline name        default_msig_contract       = name("eosio.msig");
+static inline name        default_token_contract      = name("eosio.token");
 static inline symbol      default_system_token_symbol = symbol("EOS", 4);
 static inline asset       default_system_token_asset  = asset(0, default_system_token_symbol);
 
@@ -95,14 +94,15 @@ public:
    };
    typedef eosio::singleton<"config"_n, config_row> config_table;
 
-   [[eosio::action]] void setconfig(const name   system_contract,
-                                    const name   system_contract_msig,
-                                    const name   system_token_contract,
-                                    const symbol system_token_symbol,
-                                    const symbol system_ramcore_symbol,
-                                    const symbol system_ram_symbol,
-                                    const symbol system_rex_symbol,
-                                    const bool   gifted_ram_enabled);
+   [[eosio::action]] void setconfig(const checksum256 chain_id,
+                                    const name        system_contract,
+                                    const name        system_contract_msig,
+                                    const name        system_token_contract,
+                                    const symbol      system_token_symbol,
+                                    const symbol      system_ramcore_symbol,
+                                    const symbol      system_ram_symbol,
+                                    const symbol      system_rex_symbol,
+                                    const bool        gifted_ram_enabled);
 
    [[eosio::action, eosio::read_only]] get_account_response
    account(const name account, const optional<vector<token_definition>> tokens, const optional<bool> zerobalances);

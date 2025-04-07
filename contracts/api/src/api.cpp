@@ -293,13 +293,14 @@ eosiosystem::powerup_state api::get_powerup(const api::config_row config)
 
 token_distribution api::get_token_distribution(const token_definition def)
 {
-   auto config = get_config();
+   auto config   = get_config();
+   auto rex_pool = get_rex_pool(config);
 
    token_distribution distribution = {
       .circulating = asset(0, def.symbol),
       .locked      = asset(0, def.symbol),
       .max         = asset(0, def.symbol),
-      .staked      = asset(0, def.symbol),
+      .staked      = rex_pool.total_lendable,
       .supply      = asset(0, def.symbol),
    };
 
@@ -356,18 +357,20 @@ api::balances(const name account, const vector<token_definition> tokens, const b
    return get_contract_hash(config, account);
 }
 
-[[eosio::action]] void api::setconfig(const name   system_contract,
-                                      const name   system_contract_msig,
-                                      const name   system_token_contract,
-                                      const symbol system_token_symbol,
-                                      const symbol system_ramcore_symbol,
-                                      const symbol system_ram_symbol,
-                                      const symbol system_rex_symbol,
-                                      const bool   gifted_ram_enabled)
+[[eosio::action]] void api::setconfig(const checksum256 chain_id,
+                                      const name        system_contract,
+                                      const name        system_contract_msig,
+                                      const name        system_token_contract,
+                                      const symbol      system_token_symbol,
+                                      const symbol      system_ramcore_symbol,
+                                      const symbol      system_ram_symbol,
+                                      const symbol      system_rex_symbol,
+                                      const bool        gifted_ram_enabled)
 {
    require_auth(get_self());
    config_table _config(get_self(), get_self().value);
    auto         config          = _config.get_or_default();
+   config.chain_id              = chain_id;
    config.system_contract       = system_contract;
    config.system_contract_msig  = system_contract_msig;
    config.system_token_contract = system_token_contract;
