@@ -82,7 +82,6 @@ public:
 
    struct [[eosio::table("config")]] config_row
    {
-      checksum256 chain_id              = default_chain_id;
       name        system_contract       = default_system_contract;
       name        system_contract_msig  = default_msig_contract;
       name        system_token_contract = default_token_contract;
@@ -91,6 +90,7 @@ public:
       symbol      system_ram_symbol     = eosiosystem::system_contract::ram_symbol;
       symbol      system_rex_symbol     = eosiosystem::system_contract::rex_symbol;
       bool        gifted_ram_enabled    = false;
+      checksum256 chain_id              = default_chain_id;
    };
    typedef eosio::singleton<"config"_n, config_row> config_table;
 
