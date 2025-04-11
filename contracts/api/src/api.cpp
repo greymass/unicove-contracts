@@ -330,20 +330,28 @@ token_distribution api::get_token_distribution(const token_definition def)
 [[eosio::action, eosio::read_only]] vector<token_balance>
 api::balances(const name account, const vector<token_definition> tokens, const bool zerobalances = true)
 {
+   auto config = get_config();
+
    vector<token_balance> balances;
    check(tokens.size() > 0, "tokens must not be empty");
 
-   for (const auto& token : tokens) {
-      token_balance balance = {
-         .token = token,
+   for (const auto& requested : tokens) {
+      const token_definition id = {
+         .chain    = config.chain_id,
+         .contract = requested.contract,
+         .symbol   = requested.symbol,
       };
-      eosio::token::accounts _accounts(token.contract, account.value);
-      auto                   balance_itr = _accounts.find(token.symbol.code().raw());
+      const token   token   = {.id = id};
+      token_balance balance = {.token = token};
+
+      eosio::token::accounts _accounts(token.id.contract, account.value);
+      auto                   balance_itr = _accounts.find(token.id.symbol.code().raw());
+
       if (balance_itr != _accounts.end()) {
          balance.balance = balance_itr->balance;
          balances.push_back(balance);
       } else if (zerobalances) {
-         balance.balance = asset(0, token.symbol);
+         balance.balance = asset(0, token.id.symbol);
          balances.push_back(balance);
       }
    }
