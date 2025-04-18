@@ -8,16 +8,8 @@
 
 using namespace eosio;
 using namespace std;
-using namespace antelope;
 
 namespace api {
-
-static inline checksum256 default_chain_id            = checksum256();
-static inline name        default_system_contract     = name("eosio");
-static inline name        default_msig_contract       = name("eosio.msig");
-static inline name        default_token_contract      = name("eosio.token");
-static inline symbol      default_system_token_symbol = symbol("EOS", 4);
-static inline asset       default_system_token_asset  = asset(0, default_system_token_symbol);
 
 struct get_account_response
 {
@@ -57,15 +49,15 @@ public:
 
    struct [[eosio::table("config")]] config_row
    {
-      name        system_contract       = default_system_contract;
-      name        system_contract_msig  = default_msig_contract;
-      name        system_token_contract = default_token_contract;
-      symbol      system_token_symbol   = default_system_token_symbol;
+      name        system_contract       = antelope::default_system_contract;
+      name        system_contract_msig  = antelope::default_msig_contract;
+      name        system_token_contract = antelope::default_token_contract;
+      symbol      system_token_symbol   = antelope::default_system_token_symbol;
       symbol      system_ramcore_symbol = eosiosystem::system_contract::ramcore_symbol;
       symbol      system_ram_symbol     = eosiosystem::system_contract::ram_symbol;
       symbol      system_rex_symbol     = eosiosystem::system_contract::rex_symbol;
       bool        gifted_ram_enabled    = false;
-      checksum256 chain_id              = default_chain_id;
+      checksum256 chain_id              = antelope::default_chain_id;
    };
    typedef eosio::singleton<"config"_n, config_row> config_table;
 

@@ -191,15 +191,13 @@ public:
       asset quantity;
    };
 
-   static constexpr symbol default_system_token_symbol  = symbol("EOS", 4);
-   static constexpr name   default_system_token_account = "eosio.token"_n;
-
    struct [[eosio::table("config")]] config_row
    {
       bool                       enabled      = true;
-      asset                      price        = asset(0, symbol("EOS", 4));
-      antelope::token_definition system_token = {.contract = "eosio.token"_n, .symbol = symbol("EOS", 4)};
-      name                       fees_account = "eosio"_n;
+      asset                      price        = asset(0, antelope::default_system_token_symbol);
+      antelope::token_definition system_token = {.contract = antelope::default_token_contract,
+                                                 .symbol   = antelope::default_system_token_symbol};
+      name                       fees_account = antelope::default_system_contract;
    };
    typedef eosio::singleton<"config"_n, config_row> config_table;
 

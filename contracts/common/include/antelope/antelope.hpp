@@ -7,8 +7,12 @@ using namespace std;
 
 namespace antelope {
 
-static inline symbol default_system_token_symbol = symbol("UNKNOWN", 0);
-static inline asset  default_system_token_asset  = asset(0, default_system_token_symbol);
+static inline checksum256 default_chain_id            = checksum256();
+static inline name        default_system_contract     = name("eosio");
+static inline name        default_msig_contract       = name("eosio.msig");
+static inline name        default_token_contract      = name("eosio.token");
+static inline symbol      default_system_token_symbol = symbol("UNKNOWN", 0);
+static inline asset       default_system_token_asset  = asset(0, default_system_token_symbol);
 
 struct token_definition
 {

@@ -336,7 +336,7 @@ api::balances(const name account, const vector<antelope::token_definition> token
    check(tokens.size() > 0, "tokens must not be empty");
 
    for (const auto& requested : tokens) {
-      const token_definition id = {
+      const antelope::token_definition id = {
          .chain    = config.chain_id,
          .contract = requested.contract,
          .symbol   = requested.symbol,
