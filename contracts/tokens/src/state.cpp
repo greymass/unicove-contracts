@@ -98,8 +98,10 @@ void tokens::add_token(const name issuer, const name contract, const symbol symb
    });
 }
 
-[[eosio::action]] void
-tokens::setconfig(const bool enabled, const asset price, const token_definition system_token, const name fees_account)
+[[eosio::action]] void tokens::setconfig(const bool                       enabled,
+                                         const asset                      price,
+                                         const antelope::token_definition system_token,
+                                         const name                       fees_account)
 {
    require_auth(get_self());
    config_table _config(get_self(), get_self().value);

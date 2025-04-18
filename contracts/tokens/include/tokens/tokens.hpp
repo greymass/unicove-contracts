@@ -4,6 +4,8 @@
 #include <eosio/eosio.hpp>
 #include <eosio/singleton.hpp>
 
+#include <antelope/antelope.hpp>
+
 #include <string>
 
 // namespace eosiosystem {
@@ -183,12 +185,6 @@ public:
    /**
     * From here on the contract is extended with non-standard actions/tables
     */
-   struct token_definition
-   {
-      name   contract;
-      symbol symbol;
-   };
-
    struct distribution
    {
       name  receiver;
@@ -200,10 +196,10 @@ public:
 
    struct [[eosio::table("config")]] config_row
    {
-      bool             enabled      = true;
-      asset            price        = asset(0, symbol("EOS", 4));
-      token_definition system_token = {.contract = "eosio.token"_n, .symbol = symbol("EOS", 4)};
-      name             fees_account = "eosio"_n;
+      bool                       enabled      = true;
+      asset                      price        = asset(0, symbol("EOS", 4));
+      antelope::token_definition system_token = {.contract = "eosio.token"_n, .symbol = symbol("EOS", 4)};
+      name                       fees_account = "eosio"_n;
    };
    typedef eosio::singleton<"config"_n, config_row> config_table;
 
@@ -216,8 +212,10 @@ public:
    };
    typedef eosio::multi_index<"tokens"_n, token_row> token_table;
 
-   [[eosio::action]] void
-   setconfig(const bool enabled, const asset price, const token_definition system_token, const name fees_account);
+   [[eosio::action]] void setconfig(const bool                       enabled,
+                                    const asset                      price,
+                                    const antelope::token_definition system_token,
+                                    const name                       fees_account);
    using setconfig_action = eosio::action_wrapper<"setconfig"_n, &tokens::setconfig>;
 
    [[eosio::action]] void regtoken(const name&                      issuer,

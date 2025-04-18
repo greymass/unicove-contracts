@@ -4,8 +4,11 @@
 #include <eosio.system/eosio.system.hpp>
 #include <eosio.token/eosio.token.hpp>
 
+#include <antelope/antelope.hpp>
+
 using namespace eosio;
 using namespace std;
+using namespace antelope;
 
 namespace api {
 
@@ -16,39 +19,11 @@ static inline name        default_token_contract      = name("eosio.token");
 static inline symbol      default_system_token_symbol = symbol("EOS", 4);
 static inline asset       default_system_token_asset  = asset(0, default_system_token_symbol);
 
-struct token_definition
-{
-   optional<checksum256> chain;
-   name                  contract;
-   symbol                symbol;
-};
-
-struct token_distribution
-{
-   asset circulating = default_system_token_asset;
-   asset locked      = default_system_token_asset;
-   asset max         = default_system_token_asset;
-   asset staked      = default_system_token_asset;
-   asset supply      = default_system_token_asset;
-};
-
-struct token
-{
-   token_definition             id;
-   optional<token_distribution> distribution;
-};
-
-struct token_balance
-{
-   token token;
-   asset balance;
-};
-
 struct get_account_response
 {
    name                                     account;
    checksum256                              contracthash;
-   token_balance                            balance;
+   antelope::token_balance                  balance;
    vector<eosiosystem::delegated_bandwidth> delegations;
    vector<eosio::multisig::proposal>        proposals;
    eosiosystem::refund_request              refund;
@@ -56,7 +31,7 @@ struct get_account_response
    eosiosystem::rex_fund                    rexfund;
    eosiosystem::voter_info                  vote;
    eosiosystem::gifted_ram                  giftedram;
-   vector<token_balance>                    balances;
+   vector<antelope::token_balance>          balances;
 };
 
 struct get_available_response
@@ -71,7 +46,7 @@ struct get_network_response
    eosiosystem::powerup_state      powerup;
    eosiosystem::exchange_state     ram;
    eosiosystem::rex_pool           rex;
-   token                           token;
+   antelope::token                 token;
    int64_t                         ram_gift_bytes = eosiosystem::ram_gift_bytes;
 };
 
@@ -104,15 +79,15 @@ public:
                                     const symbol      system_rex_symbol,
                                     const bool        gifted_ram_enabled);
 
-   [[eosio::action, eosio::read_only]] get_account_response
-   account(const name account, const optional<vector<token_definition>> tokens, const optional<bool> zerobalances);
+   [[eosio::action, eosio::read_only]] get_account_response account(
+      const name account, const optional<vector<antelope::token_definition>> tokens, const optional<bool> zerobalances);
    using account_action = action_wrapper<"account"_n, &api::account>;
 
    [[eosio::action, eosio::read_only]] get_available_response available(const name account);
    using available_action = action_wrapper<"available"_n, &api::available>;
 
-   [[eosio::action, eosio::read_only]] vector<token_balance>
-   balances(const name account, const vector<token_definition> tokens, const bool zerobalances);
+   [[eosio::action, eosio::read_only]] vector<antelope::token_balance>
+   balances(const name account, const vector<antelope::token_definition> tokens, const bool zerobalances);
    using balances_action = action_wrapper<"balances"_n, &api::balances>;
 
    [[eosio::action, eosio::read_only]] eosiosystem::abi_hash contracthash(const name account);
@@ -136,7 +111,7 @@ public:
    [[eosio::action, eosio::read_only]] eosiosystem::exchange_state ram();
    using ram_action = action_wrapper<"ram"_n, &api::ram>;
 
-   [[eosio::action, eosio::read_only]] token distribution(const token_definition def);
+   [[eosio::action, eosio::read_only]] antelope::token distribution(const antelope::token_definition def);
    using distribution_action = action_wrapper<"distribution"_n, &api::distribution>;
 
    [[eosio::action, eosio::read_only]] eosiosystem::refund_request refund(const name account);
@@ -164,7 +139,7 @@ public:
 
 private:
    config_row                               get_config();
-   token_distribution                       get_token_distribution(const token_definition def);
+   antelope::token_distribution             get_token_distribution(const antelope::token_definition def);
    eosiosystem::gifted_ram                  get_gifted_ram(const api::config_row config, const name account);
    eosiosystem::eosio_global_state          get_global(const config_row config);
    eosiosystem::exchange_state              get_rammarket(const config_row config);
@@ -176,9 +151,9 @@ private:
    eosiosystem::voter_info                  get_voter_info(const config_row config, const name account);
    vector<eosiosystem::delegated_bandwidth> get_delegated_bandwidth(const config_row config, const name account);
    vector<eosio::multisig::proposal>        get_msig_proposals(const config_row config, const name account);
-   token                                    get_system_token(const config_row config, const bool distribution);
-   token_definition                         get_system_token_definition(const config_row config);
-   token_balance                            get_system_token_balance(const config_row config, const name account);
+   antelope::token                          get_system_token(const config_row config, const bool distribution);
+   antelope::token_definition               get_system_token_definition(const config_row config);
+   antelope::token_balance                  get_system_token_balance(const config_row config, const name account);
 
 #ifdef DEBUG
    template <typename T>

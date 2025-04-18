@@ -8,24 +8,24 @@ api::config_row api::get_config()
    return _config.get_or_default();
 }
 
-token api::get_system_token(const config_row config, const bool distribution = false)
+antelope::token api::get_system_token(const config_row config, const bool distribution = false)
 {
-   token system_token = {.id = get_system_token_definition(config)};
+   antelope::token system_token = {.id = get_system_token_definition(config)};
    if (distribution) {
       system_token.distribution = get_token_distribution(system_token.id);
    }
    return system_token;
 }
 
-token_definition api::get_system_token_definition(const config_row config)
+antelope::token_definition api::get_system_token_definition(const config_row config)
 {
    return {.chain = config.chain_id, .contract = config.system_token_contract, .symbol = config.system_token_symbol};
 }
 
-token_balance api::get_system_token_balance(const api::config_row config, const name account)
+antelope::token_balance api::get_system_token_balance(const api::config_row config, const name account)
 {
-   token_balance balance = {.token   = get_system_token_definition(config),
-                            .balance = asset(0, config.system_token_symbol)};
+   antelope::token_balance balance = {.token   = get_system_token_definition(config),
+                                      .balance = asset(0, config.system_token_symbol)};
 
    eosio::token::accounts balance_table(config.system_token_contract, account.value);
    auto                   balance_itr = balance_table.find(config.system_token_symbol.code().raw());
@@ -178,8 +178,8 @@ eosiosystem::abi_hash get_contract_hash(const api::config_row config, const name
    return result;
 }
 
-[[eosio::action, eosio::read_only]] get_account_response
-api::account(const name account, const optional<vector<token_definition>> tokens, const optional<bool> zerobalances)
+[[eosio::action, eosio::read_only]] get_account_response api::account(
+   const name account, const optional<vector<antelope::token_definition>> tokens, const optional<bool> zerobalances)
 {
    check(is_account(account), "account does not exist");
 
@@ -194,7 +194,7 @@ api::account(const name account, const optional<vector<token_definition>> tokens
    auto rexfund      = get_rex_fund(config, account);
    auto vote         = get_voter_info(config, account);
 
-   vector<token_balance> balances;
+   vector<antelope::token_balance> balances;
    if (tokens.has_value() && !tokens->empty()) {
       balances = api::balances(account, tokens.value(), zerobalances.value_or(true));
    }
@@ -279,7 +279,7 @@ eosiosystem::powerup_state api::get_powerup(const api::config_row config)
 {
    auto config = get_config();
 
-   token_definition def = {
+   antelope::token_definition def = {
       .contract = config.system_token_contract,
       .symbol   = config.system_token_symbol,
    };
@@ -291,12 +291,12 @@ eosiosystem::powerup_state api::get_powerup(const api::config_row config)
                                .token   = get_system_token(config, true)};
 }
 
-token_distribution api::get_token_distribution(const token_definition def)
+antelope::token_distribution api::get_token_distribution(const antelope::token_definition def)
 {
    auto config   = get_config();
    auto rex_pool = get_rex_pool(config);
 
-   token_distribution distribution = {
+   antelope::token_distribution distribution = {
       .circulating = asset(0, def.symbol),
       .locked      = asset(0, def.symbol),
       .max         = asset(0, def.symbol),
@@ -322,17 +322,17 @@ token_distribution api::get_token_distribution(const token_definition def)
    return distribution;
 }
 
-[[eosio::action, eosio::read_only]] token api::distribution(const token_definition definition)
+[[eosio::action, eosio::read_only]] antelope::token api::distribution(const antelope::token_definition definition)
 {
    return {.id = definition, .distribution = get_token_distribution(definition)};
 }
 
-[[eosio::action, eosio::read_only]] vector<token_balance>
-api::balances(const name account, const vector<token_definition> tokens, const bool zerobalances = true)
+[[eosio::action, eosio::read_only]] vector<antelope::token_balance>
+api::balances(const name account, const vector<antelope::token_definition> tokens, const bool zerobalances = true)
 {
    auto config = get_config();
 
-   vector<token_balance> balances;
+   vector<antelope::token_balance> balances;
    check(tokens.size() > 0, "tokens must not be empty");
 
    for (const auto& requested : tokens) {
@@ -341,8 +341,8 @@ api::balances(const name account, const vector<token_definition> tokens, const b
          .contract = requested.contract,
          .symbol   = requested.symbol,
       };
-      const token   token   = {.id = id};
-      token_balance balance = {.token = token};
+      const antelope::token   token   = {.id = id};
+      antelope::token_balance balance = {.token = token};
 
       eosio::token::accounts _accounts(token.id.contract, account.value);
       auto                   balance_itr = _accounts.find(token.id.symbol.code().raw());

@@ -5,18 +5,18 @@ BIN := ./node_modules/.bin
 
 SRC_CONTRACT_NAME = api
 MAINNET_NODE_URL = https://eos.greymass.com
-MAINNET_CONTRACT_ACCOUNT = unicove.gm
+MAINNET_CONTRACT_ACCOUNT = unicove2.gm
 TESTNET_NODE_URL = https://jungle4.greymass.com
-TESTNET_CONTRACT_ACCOUNT = unicove.gm
+TESTNET_CONTRACT_ACCOUNT = unicove2.gm
 
 build: | build/dir
-	cdt-cpp -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -D DEBUG
+	cdt-cpp -O=3 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -I ../common/include  -D DEBUG
 
 build/debug: | build/dir
-	cdt-cpp -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -D DEBUG
+	cdt-cpp -O=3 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -I ../common/include -D DEBUG
 
 build/production: | build/dir
-	cdt-cpp -O=3 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include
+	cdt-cpp -O=3 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -I ../common/include 
 
 build/dir:
 	mkdir -p build
