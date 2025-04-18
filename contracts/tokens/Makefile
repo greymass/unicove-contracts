@@ -13,7 +13,7 @@ build: | build/dir
 	cdt-cpp -O=2 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/main.cpp -R src -I include -I ../common/include -D DEBUG
 
 build/debug: | build/dir
-	cdt-cpp -O=0 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/main.cpp -R src -I include -I ../common/include -D DEBUG
+	cdt-cpp -O=2 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/main.cpp -R src -I include -I ../common/include -D DEBUG
 
 build/production: | build/dir
 	cdt-cpp -O=2 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/main.cpp -R src -I include -I ../common/include
