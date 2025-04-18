@@ -10,13 +10,13 @@ TESTNET_NODE_URL = https://jungle4.greymass.com
 TESTNET_CONTRACT_ACCOUNT = unicove2.gm
 
 build: | build/dir
-	cdt-cpp -O=3 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -I ../common/include  -D DEBUG
+	cdt-cpp -O=2 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -I ../common/include  -D DEBUG
 
 build/debug: | build/dir
-	cdt-cpp -O=3 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -I ../common/include -D DEBUG
+	cdt-cpp -O=0 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -I ../common/include -D DEBUG
 
 build/production: | build/dir
-	cdt-cpp -O=3 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -I ../common/include 
+	cdt-cpp -O=2 -abigen -abigen_output=build/${SRC_CONTRACT_NAME}.abi -o build/${SRC_CONTRACT_NAME}.wasm src/${SRC_CONTRACT_NAME}.cpp -R src -I include -I ../common/include 
 
 build/dir:
 	mkdir -p build
