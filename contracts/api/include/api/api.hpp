@@ -34,12 +34,15 @@ struct get_available_response
 
 struct get_network_response
 {
-   eosiosystem::eosio_global_state global;
-   eosiosystem::powerup_state      powerup;
-   eosiosystem::exchange_state     ram;
-   eosiosystem::rex_pool           rex;
-   antelope::token                 token;
-   int64_t                         ram_gift_bytes = eosiosystem::ram_gift_bytes;
+   // This doesn't need to be optional, but without it the CDT creates a memory leak
+   // See: https://github.com/AntelopeIO/cdt/issues/339
+   optional<eosiosystem::eosio_global_state> global;
+
+   eosiosystem::powerup_state  powerup;
+   eosiosystem::exchange_state ram;
+   eosiosystem::rex_pool       rex;
+   antelope::token             token;
+   int64_t                     ram_gift_bytes = eosiosystem::ram_gift_bytes;
 };
 
 class [[eosio::contract("api")]] api : public contract
