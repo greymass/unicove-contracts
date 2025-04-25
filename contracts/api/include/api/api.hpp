@@ -3,6 +3,7 @@
 #include <eosio.msig/eosio.msig.hpp>
 #include <eosio.system/eosio.system.hpp>
 #include <eosio.token/eosio.token.hpp>
+#include <eosio/permission.hpp>
 
 #include <antelope/antelope.hpp>
 
@@ -24,6 +25,7 @@ struct get_account_response
    eosiosystem::voter_info                  vote;
    eosiosystem::gifted_ram                  giftedram;
    vector<antelope::token_balance>          balances;
+   time_point                               created;
 };
 
 struct get_available_response

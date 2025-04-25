@@ -193,6 +193,7 @@ eosiosystem::abi_hash get_contract_hash(const api::config_row config, const name
    auto rexbal       = get_rex_balance(config, account);
    auto rexfund      = get_rex_fund(config, account);
    auto vote         = get_voter_info(config, account);
+   auto created      = get_account_creation_time(account);
 
    vector<antelope::token_balance> balances;
    if (tokens.has_value() && !tokens->empty()) {
@@ -209,7 +210,8 @@ eosiosystem::abi_hash get_contract_hash(const api::config_row config, const name
                                .refund       = refund,
                                .rexbal       = rexbal,
                                .rexfund      = rexfund,
-                               .vote         = vote};
+                               .vote         = vote,
+                               .created      = created};
 }
 
 [[eosio::action, eosio::read_only]] get_available_response api::available(const name account)
