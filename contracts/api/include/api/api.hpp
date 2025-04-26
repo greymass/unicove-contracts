@@ -26,6 +26,8 @@ struct get_account_response
    eosiosystem::gifted_ram                  giftedram;
    vector<antelope::token_balance>          balances;
    time_point                               created;
+   // This will be possible if the contract is set as a privileged account
+   //    bool                                     privileged;
 };
 
 struct get_available_response
