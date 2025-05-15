@@ -314,11 +314,22 @@ antelope::token_distribution api::get_token_distribution(const antelope::token_d
       distribution.circulating = distribution.supply;
    }
 
-   eosio::token::accounts _accounts(def.contract, config.system_contract.value);
-   auto                   balance_itr = _accounts.find(def.symbol.code().raw());
-   if (balance_itr != _accounts.end()) {
-      distribution.locked = balance_itr->balance;
-      distribution.circulating -= distribution.locked;
+   // Consider tokens in the system contract as locked
+   eosio::token::accounts system_balances(def.contract, config.system_contract.value);
+   auto                   system_balance_itr = system_balances.find(def.symbol.code().raw());
+   if (system_balance_itr != system_balances.end()) {
+      distribution.locked += system_balance_itr->balance;
+      distribution.circulating -= system_balance_itr->balance;
+   }
+
+   // Consider tokens in the token contract as locked
+   if (config.system_contract.value != config.system_token_contract.value) {
+      eosio::token::accounts contract_balances(def.contract, config.system_token_contract.value);
+      auto                   contract_balance_itr = contract_balances.find(def.symbol.code().raw());
+      if (contract_balance_itr != contract_balances.end()) {
+         distribution.locked += contract_balance_itr->balance;
+         distribution.circulating -= contract_balance_itr->balance;
+      }
    }
 
    return distribution;
