@@ -22,7 +22,7 @@ namespace delphihelper {
 
          pairs.push_back({.base    = base_token,
                           .quote   = quote_token,
-                          .price   = asset(datapoints_itr->value, quoted_symbol),
+                          .price   = asset(datapoints_itr->median, quoted_symbol),
                           .updated = datapoints_itr->timestamp});
       }
       pairs_itr++;
