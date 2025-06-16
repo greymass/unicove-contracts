@@ -15,6 +15,11 @@ public:
    [[eosio::action]] void identityv2(const permission_level permission);
    [[eosio::action]] void identityv3(const permission_level permission, const name scope);
 
+   [[eosio::action]] void message(const string text);
+
+   [[eosio::action]] void nonce(const uint64_t nonce);
+
+
 private:
 
 };
