@@ -27,6 +27,15 @@ build/delphihelper/debug:
 build/delphihelper/production:
 	make -C contracts/delphihelper build/production
 
+build/noact:
+	make -C contracts/noact build
+
+build/noact/debug:
+	make -C contracts/noact build/debug
+
+build/noact/production:
+	make -C contracts/noact build/production
+
 build/tokens:
 	make -C contracts/tokens build
 
@@ -41,6 +50,9 @@ build/tokens/production:
 testnet:
 	make -C contracts/api testnet
 
+testnet/noact:
+	make -C contracts/noact testnet
+
 testnet/tokens:
 	make -C contracts/tokens testnet
 
@@ -51,6 +63,9 @@ mainnet/api:
 
 mainnet/delphihelper:
 	make -C contracts/delphihelper mainnet
+
+mainnet/noact:
+	make -C contracts/noact mainnet
 
 mainnet:
 	make -C contracts/api mainnet
